@@ -3,6 +3,7 @@
 module.exports = function (environment) {
   let ENV = {
     modulePrefix: 'oncore',
+    podModulePrefix: 'oncore/pods',
     environment,
     rootURL: '/',
     locationType: 'auto',
