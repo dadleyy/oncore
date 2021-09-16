@@ -1,7 +1,9 @@
 import Route from '@ember/routing/route';
+import fetch from 'fetch';
 
 class ApplicationRoute extends Route {
-  public model(): void {
+  public async model(): Promise<void> {
+    await fetch('/auth/identify');
     console.log('loading application state');
   }
 }
