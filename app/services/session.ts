@@ -6,8 +6,9 @@ import config from 'oncore/config/environment';
 
 const debug = debugLogger('service:session');
 
-type CurrentSession = {
+export type CurrentSession = {
   id: string;
+  nickname: string;
 };
 
 class Session extends Service {

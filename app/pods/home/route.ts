@@ -6,6 +6,7 @@ import type Stickbot from 'oncore/services/stickbot';
 import { inject as service } from '@ember/service';
 import * as State from 'oncore/pods/home/state';
 import * as Seidr from 'seidr';
+import * as helpers from 'oncore/utility/maybe-helpers';
 
 const debug = debugLogger('route:home');
 
@@ -29,9 +30,14 @@ class HomeRoute extends Route {
   }
 
   public async model(): Promise<Seidr.Result<Error, State.Model>> {
-    const { stickbot } = this;
+    const { stickbot, session } = this;
+    debug('loading tables');
     const tables = await stickbot.tables();
-    return tables.map(tables => ({ tables }));
+
+    const maybeModel = helpers.zip(tables.toMaybe(), session.currentSession)
+      .map(([tables, session]) => State.toModel(session, tables));
+
+    return helpers.orErr(new Error('not-found'), maybeModel);
   }
 }
 

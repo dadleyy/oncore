@@ -8,10 +8,17 @@
         </tr>
       </thead>
       <tbody>
-        {{#each model.tables key="id" as |table|}}
+        {{#each model.rows key="table.id" as |row|}}
           <tr>
-            <td>{{table.id}}</td>
-            <td><a href="#" {{on "click" (fn this.joinTable table)}}>join</a></td>
+            <td>{{row.table.id}}</td>
+            <td>
+              {{#if row.joined}}
+                <a href="#" {{on "click" (fn this.joinTable row.table)}}>view</a>
+                <a href="#" {{on "click" (fn this.leaveTable row.table)}}>leave</a>
+              {{else}}
+                <a href="#" {{on "click" (fn this.joinTable row.table)}}>join</a>
+              {{/if}}
+            </td>
           </tr>
         {{/each}}
       </tbody>

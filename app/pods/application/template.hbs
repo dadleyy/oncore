@@ -1,4 +1,12 @@
-<header></header>
+<header>
+  <CaseOf @kind={{this.model}} as |when|>
+    <when.just as |identity|>
+      <aside>
+        <p>{{identity.nickname}} | {{identity.balance}}</p>
+      </aside>
+    </when.just>
+  </CaseOf>
+</header>
 <main>
   <aside></aside>
   <section>{{outlet}}</section>
