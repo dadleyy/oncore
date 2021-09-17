@@ -53,6 +53,8 @@
     "@types/htmlbars-inline-precompile": "^1.0.1",
     "@types/qunit": "^2.11.2",
     "@types/rsvp": "^4.0.4",
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "@typescript-eslint/parser": "^4.31.1",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^1.11.3",
@@ -94,5 +96,11 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "dependencies": {
+    "ember-composable-helpers": "^4.5.0",
+    "ember-debug-logger": "^2.1.1",
+    "seidr": "^1.8.0",
+    "sums-up": "^2.2.0"
   }
 }
