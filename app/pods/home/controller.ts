@@ -39,7 +39,7 @@ class HomeController extends Controller {
       Err: error => window.alert(`${error.message}`),
       Ok: () => {
         debug('successfully joined');
-        router.refresh(router.routeName);
+        router.transitionTo('tables.single-table', table.id);
       },
     });
   }

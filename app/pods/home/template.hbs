@@ -13,7 +13,7 @@
             <td>{{row.table.id}}</td>
             <td>
               {{#if row.joined}}
-                <a href="#" {{on "click" (fn this.joinTable row.table)}}>view</a>
+                <LinkTo @route="tables.single-table" @model={{row.table.id}}>view</LinkTo>
                 <a href="#" {{on "click" (fn this.leaveTable row.table)}}>leave</a>
               {{else}}
                 <a href="#" {{on "click" (fn this.joinTable row.table)}}>join</a>

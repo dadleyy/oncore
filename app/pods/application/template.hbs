@@ -1,6 +1,9 @@
 <header>
   <CaseOf @kind={{this.model}} as |when|>
     <when.just as |identity|>
+      <nav>
+        <LinkTo @route="home">home</LinkTo>
+      </nav>
       <aside>
         <p>{{identity.nickname}} | {{identity.balance}}</p>
       </aside>
