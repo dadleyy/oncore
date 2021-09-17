@@ -1,17 +1,17 @@
 <header>
   <CaseOf @kind={{this.model}} as |when|>
     <when.just as |identity|>
-      <nav>
+      <nav role="tabpanel">
         <LinkTo @route="home">home</LinkTo>
       </nav>
-      <aside>
+      <aside role="menu">
         <p>{{identity.nickname}} | {{identity.balance}}</p>
       </aside>
     </when.just>
   </CaseOf>
 </header>
 <main>
-  <aside></aside>
+  <aside role="tablist"></aside>
   <section>{{outlet}}</section>
 </main>
 <footer></footer>

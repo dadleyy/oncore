@@ -1,7 +1,6 @@
 import Service from '@ember/service';
 import type RouterService from '@ember/routing/router-service';
 import { inject as service } from '@ember/service';
-import { readOnly } from '@ember/object/computed';
 import debugLogger from 'ember-debug-logger';
 
 const debug = debugLogger('service:router-utility');
@@ -12,10 +11,14 @@ class RouterUtils extends Service {
   @service
   public router!: RouterService;
 
-  @readOnly('router.currentRouteName')
-  public routeName!: string;
+  public get routeName(): string {
+    return this.router.currentRouteName;
+  }
 
-  public transitionTo(destination: string, ...other: Array<unknown>): Transition {
+  public transitionTo(
+    destination: string,
+    ...other: Array<unknown>
+  ): Transition {
     const { router } = this;
     return router.transitionTo.call(router, destination, ...other);
   }
@@ -25,9 +28,16 @@ class RouterUtils extends Service {
     const { router } = this;
     debug('attempting to refresh "%s"', name);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const info = router._router._routerMicrolib.state.routeInfos.find(info => info.name === name);
+    // eslint-disable-next-line ember/no-private-routing-service
+    const info = router._router._routerMicrolib.state.routeInfos.find(
+      (info) => info.name === name
+    );
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
+    // eslint-disable-next-line ember/no-private-routing-service
     router._router._routerMicrolib.refresh(info ? info.route : undefined);
   }
 }

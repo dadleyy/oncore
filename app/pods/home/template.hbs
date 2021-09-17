@@ -1,5 +1,5 @@
 <CaseOf @kind={{this.model}} as |case|>
-  {{#case.ok as |model|}}
+  <case.ok as |model|>
     <table>
       <thead>
         <tr>
@@ -23,5 +23,5 @@
         {{/each}}
       </tbody>
     </table>
-  {{/case.ok}}
+  </case.ok>
 </CaseOf>

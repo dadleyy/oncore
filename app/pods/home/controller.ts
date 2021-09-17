@@ -21,7 +21,7 @@ class HomeController extends Controller {
     const result = await stickbot.leave(table.id);
 
     result.caseOf({
-      Err: error => window.alert(`${error.message}`),
+      Err: (error) => window.alert(`${error.message}`),
       Ok: () => {
         debug('successfully left');
         router.refresh(router.routeName);
@@ -36,7 +36,7 @@ class HomeController extends Controller {
     const result = await stickbot.join(table.id);
 
     result.caseOf({
-      Err: error => window.alert(`${error.message}`),
+      Err: (error) => window.alert(`${error.message}`),
       Ok: () => {
         debug('successfully joined');
         router.transitionTo('tables.single-table', table.id);

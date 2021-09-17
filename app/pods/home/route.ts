@@ -34,7 +34,8 @@ class HomeRoute extends Route {
     debug('loading tables');
     const tables = await stickbot.tables();
 
-    const maybeModel = helpers.zip(tables.toMaybe(), session.currentSession)
+    const maybeModel = helpers
+      .zip(tables.toMaybe(), session.currentSession)
       .map(([tables, session]) => State.toModel(session, tables));
 
     return helpers.orErr(new Error('not-found'), maybeModel);

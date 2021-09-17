@@ -21,13 +21,19 @@ export type Table = {
   seats: Record<string, Seat>;
 };
 
-async function post(url: string, body: string): Promise<Seidr.Result<Error, Response>> {
+async function post(
+  url: string,
+  body: string
+): Promise<Seidr.Result<Error, Response>> {
   const headers = { 'Content-Type': 'application/json' };
   const attempt = fetchApi(url, { method: 'POST', body, headers });
   const response = await promises.awaitResult(attempt);
-  const safe = response
-    .flatMap(response => response.status === 200 ? Seidr.Ok(response) : Seidr.Err(new Error('bad-response')));
-  return promises.asyncMap(safe, response => response.json());
+  const safe = response.flatMap((response) =>
+    response.status === 200
+      ? Seidr.Ok(response)
+      : Seidr.Err(new Error('bad-response'))
+  );
+  return promises.asyncMap(safe, (response) => response.json());
 }
 
 class Stickbot extends Service {
@@ -48,7 +54,9 @@ class Stickbot extends Service {
     const result = await promises.awaitResult(
       fetchApi(`${config.apiUrl}/tables`)
     );
-    const tables = await promises.asyncMap(result, response => response.json());
+    const tables = await promises.asyncMap(result, (response) =>
+      response.json()
+    );
     return tables;
   }
 }
