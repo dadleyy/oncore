@@ -19,7 +19,7 @@
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
     "start": "ember serve",
-    "start:proxy": "ember serve --proxy http://0.0.0.0:8611",
+    "start:proxy": "ember serve --proxy http://0.0.0.0:8611 --port 8711",
     "test": "npm-run-all lint test:*",
     "test:ember": "ember test"
   },
@@ -55,6 +55,7 @@
     "@types/rsvp": "^4.0.4",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
     "@typescript-eslint/parser": "^4.31.1",
+    "autoprefixer": "^10.3.4",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^1.11.3",
@@ -64,6 +65,7 @@
     "ember-cli-dependency-checker": "^3.2.0",
     "ember-cli-htmlbars": "^5.7.1",
     "ember-cli-inject-live-reload": "^2.1.0",
+    "ember-cli-postcss": "^7.0.2",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.2",
     "ember-cli-typescript": "^4.2.1",
@@ -88,6 +90,7 @@
     "prettier": "^2.3.2",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.6.0",
+    "tailwindcss": "^2.2.15",
     "typescript": "^4.4.3",
     "webpack": "^5.51.1"
   },

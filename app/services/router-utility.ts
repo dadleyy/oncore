@@ -32,7 +32,7 @@ class RouterUtils extends Service {
     // @ts-ignore
     // eslint-disable-next-line ember/no-private-routing-service
     const info = router._router._routerMicrolib.state.routeInfos.find(
-      (info) => info.name === name
+      (info: { name: string }) => info.name === name
     );
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

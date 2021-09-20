@@ -12,13 +12,13 @@ const debug = debugLogger('route:home');
 
 class HomeRoute extends Route {
   @service
-  public session!: SessionService;
+  public declare session: SessionService;
 
   @service
-  public router!: RouterService;
+  public declare router: RouterService;
 
   @service
-  public stickbot!: Stickbot;
+  public declare stickbot: Stickbot;
 
   public beforeModel(): void {
     const { router, session } = this;

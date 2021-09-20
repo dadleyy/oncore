@@ -1,10 +1,27 @@
 'use strict';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const autoprefixer = require('autoprefixer');
+const tailwindcss = require('tailwindcss');
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 module.exports = function (defaults) {
-  let app = new EmberApp(defaults, {});
+  let app = new EmberApp(defaults, {
+    postcssOptions: {
+      compile: {
+        enabled: true,
+        plugins: [
+          {
+            module: autoprefixer,
+          },
+          {
+            module: tailwindcss,
+          },
+        ],
+      },
+    },
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { Webpack } = require('@embroider/webpack');

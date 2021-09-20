@@ -3,3 +3,41 @@ html, body {
   width: 100%;
   height: 100%;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+button {
+  @apply px-2 py-1 bg-blue-400 rounded-sm text-blue-100 border-blue-500 border-solid border;
+}
+
+button:hover {
+  @apply bg-blue-800 border-blue-900;
+}
+
+button:disabled {
+  @apply bg-gray-300 border-gray-400 text-gray-700;
+}
+
+
+input[type=text] {
+  @apply px-2 py-1 rounded-sm;
+}
+
+input[type=text] {
+  @apply bg-white border-gray-300 border;
+}
+
+table th,
+table td {
+  @apply px-2 py-1 border-gray-300 border border-solid;
+}
+
+a {
+  @apply text-blue-500;
+}
+
+a:hover {
+  @apply text-blue-600;
+}

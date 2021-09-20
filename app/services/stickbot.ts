@@ -50,6 +50,13 @@ class Stickbot extends Service {
     return result.map(() => []);
   }
 
+  public async bet(table: string, kind: string, amount: number): Promise<Seidr.Result<Error, number>> {
+    const body = JSON.stringify({ kind, amount, table });
+    await post(`${config.apiUrl}/bets`, body);
+    debug('placing "%s" for "%s"', kind, amount);
+    return Seidr.Ok(amount);
+  }
+
   public async tables(): Promise<Seidr.Result<Error, Array<Table>>> {
     const result = await promises.awaitResult(
       fetchApi(`${config.apiUrl}/tables`)

@@ -1,17 +1,25 @@
-<header>
+<header class="flex py-1 px-1">
   <CaseOf @kind={{this.model}} as |when|>
-    <when.just as |identity|>
+    <when.just>
       <nav role="tabpanel">
-        <LinkTo @route="home">home</LinkTo>
+        <LinkTo @route="home">Home</LinkTo>
       </nav>
-      <aside role="menu">
-        <p>{{identity.nickname}} | {{identity.balance}}</p>
+
+      <aside role="menu" class="ml-auto">
+        {{!-- UserMenu uses it's own service injection to be notified when the player's balance is updated --}}
+        <Application::UserMenu />
       </aside>
     </when.just>
   </CaseOf>
 </header>
-<main>
-  <aside role="tablist"></aside>
-  <section>{{outlet}}</section>
+
+<main class="w-full relative">
+  <div class="w-full flex relative">
+    <aside role="tablist" class="pl-1">
+      Oncore
+    </aside>
+
+    <section class="ml-4 pr-1 flex-1">{{outlet}}</section>
+  </div>
 </main>
 <footer></footer>
