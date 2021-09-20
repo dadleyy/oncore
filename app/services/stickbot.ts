@@ -18,6 +18,7 @@ export type Seat = {
 
 export type Table = {
   id: string;
+  nonce: string;
   seats: Record<string, Seat>;
 };
 

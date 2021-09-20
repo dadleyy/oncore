@@ -1,6 +1,6 @@
 <CaseOf @kind={{this.model}} as |when|>
   <when.ok as |model|>
-    <div data-table-id={{model.table.id}}>
+    <div data-table-id={{model.table.id}} data-table-version={{model.table.nonce}}>
       <CaseOf @kind={{model.playerPosition}} as |when|>
         <when.just as |seat|>
           <div data-role="player-position" class="flex">

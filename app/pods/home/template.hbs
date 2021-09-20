@@ -1,6 +1,6 @@
 <CaseOf @kind={{this.model}} as |case|>
   <case.ok as |model|>
-    <table>
+    <table class="table-fixed w-full">
       <thead>
         <tr>
           <th>id</th>
@@ -9,7 +9,7 @@
       </thead>
       <tbody>
         {{#each model.rows key="table.id" as |row|}}
-          <tr>
+          <tr data-table-id={{row.table.id}} data-table-version={{row.table.nonce}}>
             <td>{{row.table.id}}</td>
             <td>
               {{#if row.joined}}

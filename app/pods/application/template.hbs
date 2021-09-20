@@ -1,4 +1,4 @@
-<header class="flex py-1 px-1">
+<header class="flex py-1 px-1 border-b border-solid border-gray-300">
   <CaseOf @kind={{this.model}} as |when|>
     <when.just>
       <nav role="tabpanel">
@@ -13,13 +13,13 @@
   </CaseOf>
 </header>
 
-<main class="w-full relative">
-  <div class="w-full flex relative">
-    <aside role="tablist" class="pl-1">
+<main class="w-full relative h-full">
+  <div class="w-full flex relative h-full">
+    <aside role="tablist" class="pt-2 pl-1 pr-6 border-solid h-full border-gray-300 border-r">
       Oncore
     </aside>
 
-    <section class="ml-4 pr-1 flex-1">{{outlet}}</section>
+    <section class="ml-4 pt-2 pl-2 pr-1 flex-1">{{outlet}}</section>
   </div>
 </main>
 <footer></footer>
