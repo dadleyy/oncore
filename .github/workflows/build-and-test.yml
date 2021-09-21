@@ -15,6 +15,6 @@ jobs:
       - run: npm run build
       - name: release
         uses: softprops/action-gh-release@v1
-        id: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: README.md
