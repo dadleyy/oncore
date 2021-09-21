@@ -1,6 +1,6 @@
 {
   "name": "oncore",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "online fun",
   "repository": "",
@@ -12,15 +12,12 @@
   },
   "scripts": {
     "build": "ember build --environment=production",
-    "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
-    "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
     "lint:hbs": "ember-template-lint .",
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
     "start": "ember serve",
     "start:proxy": "ember serve --proxy http://0.0.0.0:8611 --port 8711 --proxy-in-timeout 1500",
-    "test": "npm-run-all lint test:*",
     "test:ember": "ember test"
   },
   "devDependencies": {
@@ -86,7 +83,6 @@
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-qunit": "^6.2.0",
     "loader.js": "^4.7.0",
-    "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.6.0",
