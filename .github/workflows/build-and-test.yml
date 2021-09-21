@@ -9,3 +9,7 @@ jobs:
         with:
           node-version: '12'
       - run: npm i
+      - run: npm run test:ember
+      - run: npm run lint:js
+      - run: npm run lint:hbs
+      - run: npm run build
