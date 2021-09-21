@@ -1,4 +1,5 @@
 import * as Seidr from 'seidr';
+import { dasherize } from '@ember/string';
 import debugLogger from 'ember-debug-logger';
 import * as Stickbot from 'oncore/services/stickbot';
 import { CurrentSession } from 'oncore/services/session';
@@ -10,12 +11,15 @@ export type ParsedBet = {
   kind: string;
   state: Stickbot.Bet;
   amount: number;
+  target: number | null;
 };
 
 export type Seat = {
   state: Stickbot.Seat;
   balance: number;
+  hasPass: boolean;
   bets: Array<ParsedBet>;
+  comeOddsOptions: Array<number>;
 };
 
 export type State = {
@@ -25,11 +29,16 @@ export type State = {
 
 function parseBet(input: Stickbot.Bet): ParsedBet {
   if (input.race) {
-    const [kind, amount] = input.race;
-    return { kind, amount, state: input  };
+    const [kind, amount, target] = input.race;
+    return { kind: dasherize(kind), amount, target, state: input };
   }
 
-  return { kind: '', state: input, amount: 0 };
+  if (input.target) {
+    const [kind, amount, target] = input.target;
+    return { kind: dasherize(kind), amount, target, state: input };
+  }
+
+  return { kind: '', state: input, amount: 0, target: null };
 }
 
 function parseSeat(input: Stickbot.Seat): Seat {
@@ -39,6 +48,10 @@ function parseSeat(input: Stickbot.Seat): Seat {
     bets,
     state: input,
     balance: input.balance,
+    comeOddsOptions: bets
+      .filter(b => b.kind === 'come')
+      .reduce((acc, b) => b.target ? [...acc, b.target] : acc, []),
+    hasPass: bets.some(bet => dasherize(bet.kind) === 'pass'),
   };
 }
 

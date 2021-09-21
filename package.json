@@ -19,7 +19,7 @@
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
     "start": "ember serve",
-    "start:proxy": "ember serve --proxy http://0.0.0.0:8611 --port 8711",
+    "start:proxy": "ember serve --proxy http://0.0.0.0:8611 --port 8711 --proxy-in-timeout 1500",
     "test": "npm-run-all lint test:*",
     "test:ember": "ember test"
   },
@@ -102,8 +102,10 @@
   },
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
+    "ember-basic-dropdown": "^3.0.19",
     "ember-composable-helpers": "^4.5.0",
     "ember-debug-logger": "^2.1.1",
+    "ember-truth-helpers": "^3.0.0",
     "seidr": "^1.8.0",
     "sums-up": "^2.2.0"
   }

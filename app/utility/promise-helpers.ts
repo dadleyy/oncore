@@ -20,3 +20,13 @@ export async function asyncMap<T, U>(
     Err: (error) => Promise.resolve(Seidr.Err(error)),
   });
 }
+
+export async function asyncFlatMap<T, U>(
+  result: Seidr.Result<Error, T>,
+  mapper: (item: T) => Promise<Seidr.Result<Error, U>>
+): Promise<Seidr.Result<Error, U>> {
+  return result.caseOf({
+    Ok: (data) => mapper(data),
+    Err: (error) => Promise.resolve(Seidr.Err(error)),
+  });
+}

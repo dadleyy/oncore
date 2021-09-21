@@ -7,6 +7,7 @@ import debugLogger from 'ember-debug-logger';
 import * as State from 'oncore/pods/components/table-view/state';
 import * as Seidr from 'seidr';
 import * as helpers from 'oncore/utility/maybe-helpers';
+import * as promises from 'oncore/utility/promise-helpers';
 
 const debug = debugLogger('route:tables.single-table');
 
@@ -39,11 +40,8 @@ class TableRoute extends Route {
   ): Promise<Seidr.Result<Error, State.State>> {
     const { stickbot, session } = this;
     const identity = helpers.orErr(new Error('unauth'), session.currentSession);
-    const tables = await stickbot.tables();
     debug('loading table details - "%s"', params.table);
-    return identity.flatMap((id) =>
-      tables.flatMap((tables) => State.fromTables(params.table, tables, id))
-    );
+    return await promises.asyncFlatMap(identity, session => State.load(stickbot, params.table, session));
   }
 }
 

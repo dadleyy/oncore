@@ -24,6 +24,9 @@ class TableView extends Component<{ state: State.State }> {
   @tracked
   public polls: Array<State.State> = [];
 
+  @tracked
+  public pendingJobs: Array<string> = [];
+
   public get state(): State.State {
     const { polls } = this;
     const [first = this.args.state] = polls;
@@ -46,8 +49,8 @@ class TableView extends Component<{ state: State.State }> {
       }
 
       debug('fetched new state');
-      this.polls = [next, ...this.polls];
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      this.polls = [next, ...this.polls].slice(0, 5);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     debug('polling complete, component unmounted');
@@ -67,8 +70,31 @@ class TableView extends Component<{ state: State.State }> {
   public async bet(kind: string): Promise<void> {
     const { wager, stickbot, state } = this;
     debug('placing bet wager "%s"', kind);
-    await stickbot.bet(state.table, kind, wager);
+    const result = await stickbot.bet(state.table, kind, wager);
     this.wager = 0;
+    const attempt = result.getOrElse(undefined);
+
+    if (!attempt) {
+      return;
+    }
+
+    debug('attempt made, job "%s"', attempt.job);
+    this.pendingJobs = [attempt.job, ...this.pendingJobs];
+  }
+
+  @action
+  public async comeOdds(target: number): Promise<void> {
+    const { wager, state , stickbot } = this;
+    debug('taking come "%s" odds on the "%s"', wager, target);
+    await stickbot.odds(state.table, target, wager);
+    this.wager = 0;
+  }
+
+  @action
+  public async roll(): Promise<void> {
+    const { state, stickbot } = this;
+    debug('rolling the dice!');
+    await stickbot.roll(state.table);
   }
 }
 
