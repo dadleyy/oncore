@@ -101,6 +101,7 @@
     "edition": "octane"
   },
   "dependencies": {
+    "@ember/render-modifiers": "^1.0.2",
     "ember-composable-helpers": "^4.5.0",
     "ember-debug-logger": "^2.1.1",
     "seidr": "^1.8.0",

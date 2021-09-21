@@ -4,7 +4,7 @@ import type SessionService from 'oncore/services/session';
 import type RouterService from '@ember/routing/router-service';
 import { inject as service } from '@ember/service';
 import debugLogger from 'ember-debug-logger';
-import * as State from 'oncore/pods/tables/single-table/state';
+import * as State from 'oncore/pods/components/table-view/state';
 import * as Seidr from 'seidr';
 import * as helpers from 'oncore/utility/maybe-helpers';
 
@@ -36,7 +36,7 @@ class TableRoute extends Route {
 
   public async model(
     params: Params
-  ): Promise<Seidr.Result<Error, State.Model>> {
+  ): Promise<Seidr.Result<Error, State.State>> {
     const { stickbot, session } = this;
     const identity = helpers.orErr(new Error('unauth'), session.currentSession);
     const tables = await stickbot.tables();

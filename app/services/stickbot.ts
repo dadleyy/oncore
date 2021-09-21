@@ -7,8 +7,12 @@ import debugLogger from 'ember-debug-logger';
 
 const debug = debugLogger('service:stickbot');
 
-type Bet = {
-  kind: string;
+export type BetSubmission = {
+  job: string;
+};
+
+export type Bet = {
+  race?: [string, number, number | null];
 };
 
 export type Seat = {
@@ -22,10 +26,10 @@ export type Table = {
   seats: Record<string, Seat>;
 };
 
-async function post(
+async function post<T>(
   url: string,
   body: string
-): Promise<Seidr.Result<Error, Response>> {
+): Promise<Seidr.Result<Error, T>> {
   const headers = { 'Content-Type': 'application/json' };
   const attempt = fetchApi(url, { method: 'POST', body, headers });
   const response = await promises.awaitResult(attempt);
@@ -51,11 +55,21 @@ class Stickbot extends Service {
     return result.map(() => []);
   }
 
-  public async bet(table: string, kind: string, amount: number): Promise<Seidr.Result<Error, number>> {
-    const body = JSON.stringify({ kind, amount, table });
-    await post(`${config.apiUrl}/bets`, body);
+  public async bet(
+    table: Pick<Table, 'id' | 'nonce'>,
+    kind: string,
+    amount: number
+  ): Promise<Seidr.Result<Error, BetSubmission>> {
+    const body = JSON.stringify({
+      kind,
+      amount,
+      table: table.id,
+      nonce: table.nonce,
+    });
     debug('placing "%s" for "%s"', kind, amount);
-    return Seidr.Ok(amount);
+    const submission = await post<BetSubmission>(`${config.apiUrl}/bets`, body);
+    debug('bet submission %j', submission);
+    return submission;
   }
 
   public async tables(): Promise<Seidr.Result<Error, Array<Table>>> {
