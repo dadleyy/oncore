@@ -41,7 +41,9 @@ class TableRoute extends Route {
     const { stickbot, session } = this;
     const identity = helpers.orErr(new Error('unauth'), session.currentSession);
     debug('loading table details - "%s"', params.table);
-    return await promises.asyncFlatMap(identity, session => State.load(stickbot, params.table, session));
+    return await promises.asyncFlatMap(identity, (session) =>
+      State.load(stickbot, params.table, session)
+    );
   }
 }
 

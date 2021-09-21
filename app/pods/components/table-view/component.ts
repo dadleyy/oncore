@@ -11,6 +11,7 @@ const debug = debugLogger('component:table-view');
 
 class TableView extends Component<{ state: State.State }> {
   public tagName = '';
+  private wagerBox?: HTMLInputElement = undefined;
 
   @tracked
   public wager = 0;
@@ -68,7 +69,7 @@ class TableView extends Component<{ state: State.State }> {
 
   @action
   public async bet(kind: string): Promise<void> {
-    const { wager, stickbot, state } = this;
+    const { wager, stickbot, state, wagerBox } = this;
     debug('placing bet wager "%s"', kind);
     const result = await stickbot.bet(state.table, kind, wager);
     this.wager = 0;
@@ -80,14 +81,23 @@ class TableView extends Component<{ state: State.State }> {
 
     debug('attempt made, job "%s"', attempt.job);
     this.pendingJobs = [attempt.job, ...this.pendingJobs];
+
+    if (wagerBox) {
+      wagerBox.focus();
+    }
   }
 
   @action
   public async comeOdds(target: number): Promise<void> {
-    const { wager, state , stickbot } = this;
+    const { wager, state, stickbot } = this;
     debug('taking come "%s" odds on the "%s"', wager, target);
     await stickbot.odds(state.table, target, wager);
     this.wager = 0;
+  }
+
+  @action
+  public setWagerBox(element: HTMLInputElement): void {
+    this.wagerBox = element;
   }
 
   @action

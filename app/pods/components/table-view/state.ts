@@ -49,9 +49,9 @@ function parseSeat(input: Stickbot.Seat): Seat {
     state: input,
     balance: input.balance,
     comeOddsOptions: bets
-      .filter(b => b.kind === 'come')
-      .reduce((acc, b) => b.target ? [...acc, b.target] : acc, []),
-    hasPass: bets.some(bet => dasherize(bet.kind) === 'pass'),
+      .filter((b) => b.kind === 'come')
+      .reduce((acc, b) => (b.target ? [...acc, b.target] : acc), []),
+    hasPass: bets.some((bet) => dasherize(bet.kind) === 'pass'),
   };
 }
 

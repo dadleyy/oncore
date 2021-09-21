@@ -2,7 +2,8 @@
   data-table-id={{this.state.table.id}}
   data-table-version={{this.state.table.nonce}}
   class="flex items-start w-full"
-  {{did-insert (action 'startPolling')}}
+  {{did-insert this.startPolling}}
+  {{on-key "r" this.roll}}
 >
   <div data-role="table-history" class="w-1/6 mr-4">
     <table class="table-fixed w-full">
@@ -67,7 +68,7 @@
                 </tr>
               {{else}}
                 <tr>
-                  <td colspan=3>
+                  <td colspan={{3}}>
                     No Bets
                   </td>
                 </tr>
@@ -76,11 +77,19 @@
           </table>
         </div>
         <div data-role="bet-controls" class="mt-5" data-wager={{this.wageer}}>
-          <button class="mr-4" type="button" {{on "click" (fn this.roll)}}>Roll</button>
+          <button class="mr-4" type="button" {{on "click" this.roll}}>Roll</button>
+
           <label>
             Wager
-            <input for="wager" type="text" value={{this.wager}} {{on "input" (fn this.setWager)}}/>
+            <input
+              for="wager"
+              type="text"
+              value={{this.wager}}
+              {{on "input" this.setWager}}
+              {{did-insert this.setWagerBox}}
+            />
           </label>
+
           <button
             disabled={{or this.state.table.button (if this.wager false true)}}
             type="button"
@@ -90,7 +99,7 @@
           </button>
 
           <button
-            disabled={{or (not seat.hasPass) (if this.wager false true)}}
+            disabled={{or (not seat.hasPass) (not this.state.table.button) (if this.wager false true)}}
             type="button"
             {{on "click" (fn this.bet "pass-odds")}}
           >
@@ -114,7 +123,7 @@
                 class="dropdown-option"
                 type="button"
                 role="button"
-                {{on "click" (queue (fn dropdown.actions.close) (fn this.comeOdds option))}}
+                {{on "click" (queue dropdown.actions.close (fn this.comeOdds option))}}
               >
                   {{option}}
                 </div>

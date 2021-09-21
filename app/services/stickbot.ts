@@ -58,7 +58,9 @@ class Stickbot extends Service {
     return result.map(() => []);
   }
 
-  public async roll(table: Pick<Table, 'id' | 'nonce'>): Promise<Seidr.Result<Error, number>> {
+  public async roll(
+    table: Pick<Table, 'id' | 'nonce'>
+  ): Promise<Seidr.Result<Error, number>> {
     debug('attempting to start roll on table "%s"', table.id);
     const body = JSON.stringify({ table: table.id, nonce: table.nonce });
     await post(`${config.apiUrl}/rolls`, body);
@@ -71,7 +73,7 @@ class Stickbot extends Service {
     amount: number
   ): Promise<Seidr.Result<Error, BetSubmission>> {
     const body = JSON.stringify({
-      kind: "come-odds",
+      kind: 'come-odds',
       amount,
       target,
       table: table.id,
