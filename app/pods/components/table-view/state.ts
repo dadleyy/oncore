@@ -70,7 +70,11 @@ function parseSeat(input: Stickbot.Seat): Seat {
 function parseTable(table: Stickbot.Table, session: CurrentSession): State {
   const player = table.seats[session.id];
   const playerPosition = Seidr.Maybe.fromNullable(player).map(parseSeat);
-  const rollHistory = table.rolls.map(([left, right]) => ({ left, right, total: left + right }));
+  const rollHistory = table.rolls.map(([left, right]) => ({
+    left,
+    right,
+    total: left + right,
+  }));
   return { table, playerPosition, rollHistory };
 }
 

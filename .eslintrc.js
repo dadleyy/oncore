@@ -21,7 +21,9 @@ module.exports = {
   env: {
     browser: true,
   },
-  rules: {},
+  rules: {
+    'ember/no-empty-glimmer-component-classes': 'warn',
+  },
   overrides: [
     // node files
     {

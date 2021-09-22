@@ -32,5 +32,5 @@ export async function asyncFlatMap<T, U>(
 }
 
 export async function sleep(amount: number): Promise<void> {
-  await new Promise(resolve => setTimeout(resolve, amount));
+  await new Promise((resolve) => setTimeout(resolve, amount));
 }
