@@ -9,13 +9,16 @@
     <table class="table-fixed w-full">
       <thead>
         <tr>
-          <td>Roll History</td>
+          <td colspan={{2}}>Roll History</td>
+          <td>Total</td>
         </tr>
       </thead>
       <tbody>
-        {{#each this.state.table.rolls key="@index" as |roll|}}
-          <tr>
-            <td>{{get roll 0}} x {{get roll 1}}</td>
+        {{#each this.state.rollHistory key="@index" as |roll index|}}
+          <tr class={{if (eq index 0) "bg-gray-100" "text-gray-400"}}>
+            <td>{{roll.left}}</td>
+            <td>{{roll.right}}</td>
+            <td><b>{{roll.total}}</b></td>
           </tr>
         {{/each}}
       </tbody>
@@ -35,10 +38,6 @@
               <tr>
                 <td>button</td>
                 <td>{{this.state.table.button}}</td>
-              </tr>
-              <tr>
-                <td>last roll</td>
-                <td>{{inc (get (get this.state.table.rolls 0) 1) (get (get this.state.table.rolls 0) 0)}}</td>
               </tr>
               <tr>
                 <td>version</td>
@@ -77,59 +76,88 @@
           </table>
         </div>
         <div data-role="bet-controls" class="mt-5" data-wager={{this.wageer}}>
-          <button class="mr-4" type="button" {{on "click" this.roll}}>Roll</button>
+          <div class="flex items-center mb-4">
+            <button class="mr-4" {{on "click" this.roll}}>
+              Roll
+            </button>
 
-          <label>
-            Wager
-            <input
-              for="wager"
-              type="text"
-              value={{this.wager}}
-              {{on "input" this.setWager}}
-              {{did-insert this.setWagerBox}}
+            <label class="flex-1 inline-block flex items-center">
+              Wager
+              <input
+                for="wager"
+                type="text"
+                value={{this.wager}}
+                class="w-full ml-2"
+                {{on "input" this.setWager}}
+                {{did-insert this.setWagerBox}}
+              />
+            </label>
+          </div>
+
+          <div class="flex items-center flex-wrap space-x-4">
+            <button
+              class="flex-1"
+              disabled={{or this.state.table.button (if this.wager false true)}}
+              type="button"
+              {{on "click" (fn this.bet "pass")}}
+            >
+              Pass
+            </button>
+
+            <button
+              class="flex-1"
+              disabled={{or (not seat.hasPass) (not this.state.table.button) (if this.wager false true)}}
+              type="button"
+              {{on "click" (fn this.bet "pass-odds")}}
+            >
+              Pass Odds
+            </button>
+
+            <button
+              class="flex-1"
+              disabled={{or (not this.state.table.button) (if this.wager false true)}}
+              type="button"
+              {{on "click" (fn this.bet "come")}}
+            >
+              Come
+            </button>
+
+            <button
+              class="flex-1"
+              disabled={{not this.wager}}
+              type="button"
+              {{on "click" (fn this.bet "field")}}
+            >
+              Field
+            </button>
+
+            <HardwayDropdown
+              @disabled={{or (not this.wager) (not this.state.table.button)}}
+              @submit={{this.hardway}}
             />
-          </label>
 
-          <button
-            disabled={{or this.state.table.button (if this.wager false true)}}
-            type="button"
-            {{on "click" (fn this.bet "pass")}}
-          >
-            Pass
-          </button>
+            <PlaceDropdown
+              @disabled={{or (not this.wager) (not this.state.table.button)}}
+              @place={{this.place}}
+            />
 
-          <button
-            disabled={{or (not seat.hasPass) (not this.state.table.button) (if this.wager false true)}}
-            type="button"
-            {{on "click" (fn this.bet "pass-odds")}}
-          >
-            Pass Odds
-          </button>
-
-          <button
-            disabled={{or (not this.state.table.button) (if this.wager false true)}}
-            type="button"
-            {{on "click" (fn this.bet "come")}}
-          >
-            Come
-          </button>
-
-          <BasicDropdown @disabled={{not seat.comeOddsOptions.length}} as |dropdown|>
-            <dropdown.Trigger class="button">Come Odds</dropdown.Trigger>
-            <dropdown.Content class="dropdown">
-              {{#each seat.comeOddsOptions as |option|}}
-              <div
-                data-role="come-odds-option"
-                class="dropdown-option"
-                type="button"
-                role="button"
-                {{on "click" (queue dropdown.actions.close (fn this.comeOdds option))}}
-              >
-                  {{option}}
-                </div>
-              {{/each}}
-            </dropdown.Content>
-          </BasicDropdown>
+            <BasicDropdown @disabled={{not seat.comeOddsOptions.length}} as |dropdown|>
+              <dropdown.Trigger class="button flex-1">Come Odds</dropdown.Trigger>
+              <dropdown.Content class="dropdown">
+                {{#each seat.comeOddsOptions as |option|}}
+                  <div
+                    data-role="come-odds-option"
+                    class="dropdown-option"
+                    type="button"
+                    role="button"
+                    {{on "click" (queue dropdown.actions.close (fn this.comeOdds option))}}
+                  >
+                    {{option}}
+                  </div>
+                {{/each}}
+              </dropdown.Content>
+            </BasicDropdown>
+          </div>
         </div>
       </div>
     </when.just>

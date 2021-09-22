@@ -6,8 +6,11 @@ import Session from 'oncore/services/session';
 import { action } from '@ember/object';
 import debugLogger from 'ember-debug-logger';
 import * as State from 'oncore/pods/components/table-view/state';
+import * as promises from 'oncore/utility/promise-helpers';
 
 const debug = debugLogger('component:table-view');
+
+const POLL_DELAY = 3000;
 
 class TableView extends Component<{ state: State.State }> {
   public tagName = '';
@@ -51,7 +54,7 @@ class TableView extends Component<{ state: State.State }> {
 
       debug('fetched new state');
       this.polls = [next, ...this.polls].slice(0, 5);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await promises.sleep(POLL_DELAY);
     }
 
     debug('polling complete, component unmounted');
@@ -98,6 +101,22 @@ class TableView extends Component<{ state: State.State }> {
   @action
   public setWagerBox(element: HTMLInputElement): void {
     this.wagerBox = element;
+  }
+
+  @action
+  public async hardway(target: number): Promise<void> {
+    const { wager, state, stickbot } = this;
+    debug('submitting hardway bet for "%s"', target);
+    await stickbot.hardway(state.table, target, wager);
+    this.wager = 0;
+  }
+
+  @action
+  public async place(target: number): Promise<void> {
+    const { wager, state, stickbot } = this;
+    debug('submitting place bet for "%s"', target);
+    await stickbot.place(state.table, target, wager);
+    this.wager = 0;
   }
 
   @action

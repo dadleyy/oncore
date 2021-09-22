@@ -1,0 +1,44 @@
+<BasicDropdown @disabled={{@disabled}} as |dropdown|>
+  <dropdown.Trigger class="button flex-1">Hardways</dropdown.Trigger>
+  <dropdown.Content class="dropdown">
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @submit 4))}}
+    >
+      four
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @submit 6))}}
+    >
+      six
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @submit 8))}}
+    >
+      eight
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @submit 10))}}
+    >
+      ten
+    </div>
+  </dropdown.Content>
+</BasicDropdown>

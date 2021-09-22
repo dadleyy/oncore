@@ -30,3 +30,7 @@ export async function asyncFlatMap<T, U>(
     Err: (error) => Promise.resolve(Seidr.Err(error)),
   });
 }
+
+export async function sleep(amount: number): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, amount));
+}

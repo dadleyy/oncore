@@ -22,7 +22,14 @@ export type Seat = {
   comeOddsOptions: Array<number>;
 };
 
+export type ParsedRoll = {
+  left: number;
+  right: number;
+  total: number;
+};
+
 export type State = {
+  rollHistory: Array<ParsedRoll>;
   table: Stickbot.Table;
   playerPosition: Seidr.Maybe<Seat>;
 };
@@ -38,6 +45,11 @@ function parseBet(input: Stickbot.Bet): ParsedBet {
     return { kind: dasherize(kind), amount, target, state: input };
   }
 
+  if (input.field) {
+    return { kind: 'field', amount: input.field, state: input, target: null };
+  }
+
+  debug('unrecognized bet payload "%j"', input);
   return { kind: '', state: input, amount: 0, target: null };
 }
 
@@ -55,19 +67,20 @@ function parseSeat(input: Stickbot.Seat): Seat {
   };
 }
 
+function parseTable(table: Stickbot.Table, session: CurrentSession): State {
+  const player = table.seats[session.id];
+  const playerPosition = Seidr.Maybe.fromNullable(player).map(parseSeat);
+  const rollHistory = table.rolls.map(([left, right]) => ({ left, right, total: left + right }));
+  return { table, playerPosition, rollHistory };
+}
+
 export function fromTables(
   id: string,
   tables: Array<Stickbot.Table>,
   session: CurrentSession
 ): Seidr.Result<Error, State> {
   const maybeTable = Seidr.Maybe.fromNullable(tables.find((t) => t.id === id));
-
-  const model = maybeTable.map((table) => {
-    const player = table.seats[session.id];
-    const playerPosition = Seidr.Maybe.fromNullable(player).map(parseSeat);
-    return { table, playerPosition };
-  });
-
+  const model = maybeTable.map((table) => parseTable(table, session));
   return helpers.orErr(new Error('not-found'), model);
 }
 

@@ -1,0 +1,64 @@
+<BasicDropdown @disabled={{@disabled}} as |dropdown|>
+  <dropdown.Trigger class="button flex-1">Place Bets</dropdown.Trigger>
+  <dropdown.Content class="dropdown">
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @place 4))}}
+    >
+      four
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @place 5))}}
+    >
+      five
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @place 6))}}
+    >
+      six
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @place 8))}}
+    >
+      eight
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @place 9))}}
+    >
+      nine
+    </div>
+
+    <div
+      data-role="place-option"
+      type="button"
+      role="button"
+      class="dropdown-option"
+      {{on "click" (queue dropdown.actions.close (fn @place 10))}}
+    >
+      ten
+    </div>
+  </dropdown.Content>
+</BasicDropdown>

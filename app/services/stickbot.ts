@@ -14,6 +14,7 @@ export type BetSubmission = {
 export type Bet = {
   race?: [string, number, number | null];
   target?: [string, number, number | null];
+  field?: number;
 };
 
 export type Seat = {
@@ -65,6 +66,36 @@ class Stickbot extends Service {
     const body = JSON.stringify({ table: table.id, nonce: table.nonce });
     await post(`${config.apiUrl}/rolls`, body);
     return Seidr.Ok(1);
+  }
+
+  public async hardway(
+    table: Pick<Table, 'id' | 'nonce'>,
+    target: number,
+    amount: number
+  ): Promise<Seidr.Result<Error, BetSubmission>> {
+    const body = JSON.stringify({
+      kind: 'hardway',
+      amount,
+      target,
+      table: table.id,
+      nonce: table.nonce,
+    });
+    return await post<BetSubmission>(`${config.apiUrl}/bets`, body);
+  }
+
+  public async place(
+    table: Pick<Table, 'id' | 'nonce'>,
+    target: number,
+    amount: number
+  ): Promise<Seidr.Result<Error, BetSubmission>> {
+    const body = JSON.stringify({
+      kind: 'place',
+      amount,
+      target,
+      table: table.id,
+      nonce: table.nonce,
+    });
+    return await post<BetSubmission>(`${config.apiUrl}/bets`, body);
   }
 
   public async odds(
