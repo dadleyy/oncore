@@ -9,8 +9,8 @@
     <table class="table-fixed w-full">
       <thead>
         <tr>
-          <td colspan={{2}}>Roll History</td>
-          <td>Total</td>
+          <td colspan={{2}}>{{t "table_view.roll_history"}}</td>
+          <td>{{t "table_view.roll_total"}}</td>
         </tr>
       </thead>
       <tbody>
@@ -32,19 +32,19 @@
           <table>
             <tbody>
               <tr>
-                <td>balance</td>
+                <td>{{t "table_view.balance"}}</td>
                 <td>{{seat.balance}}</td>
               </tr>
               <tr>
-                <td>button</td>
+                <td>{{t "table_view.button"}}</td>
                 <td>{{this.state.table.button}}</td>
               </tr>
               <tr>
-                <td>version</td>
+                <td>{{t "table_view.version"}}</td>
                 <td><code>{{this.state.table.nonce}}</code></td>
               </tr>
               <tr>
-                <td>roller</td>
+                <td>{{t "table_view.roller"}}</td>
                 <td><code>{{this.state.table.roller}}</code></td>
               </tr>
             </tbody>
@@ -53,9 +53,9 @@
           <table class="ml-4">
             <thead>
               <tr>
-                <th>Bet Kind</th>
-                <th>Wager</th>
-                <th>Wins On</th>
+                <th>{{t "table_view.bet_kind"}}</th>
+                <th>{{t "table_view.wager"}}</th>
+                <th>{{t "table_view.wins_on"}}</th>
               </tr>
             </thead>
             <tbody>
@@ -67,9 +67,15 @@
                 </tr>
               {{else}}
                 <tr>
-                  <td colspan={{3}}>
-                    No Bets
-                  </td>
+                  <td colspan={{3}}>{{t "table_view.no_bets"}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+
+            <tbody>
+              {{#each this.state.pendingBets key="id" as |pending|}}
+                <tr data-role="pending-bet" data-job-id={{pending.id}}>
+                  <td colspan={{3}}>{{t "table_view.pending"}}</td>
                 </tr>
               {{/each}}
             </tbody>
@@ -77,16 +83,20 @@
         </div>
         <div data-role="bet-controls" class="mt-5" data-wager={{this.wageer}}>
           <div class="flex items-center mb-4">
-            <button class="mr-4" {{on "click" this.roll}}>
-              Roll
+            <button
+              class="mr-4" {{on "click" this.roll}}
+              disabled={{or (is-just this.state.pendingRoll) this.state.busy}}
+              type="button"
+            >
+              {{if (is-just this.state.pendingRoll) (t 'table_view.rolling') (t 'table_view.roll')}}
             </button>
 
             <label class="flex-1 inline-block flex items-center">
-              Wager
               <input
                 for="wager"
                 type="text"
                 value={{this.wager}}
+                placeholder={{t "table_view.wager"}}
                 class="w-full ml-2"
                 {{on "input" this.setWager}}
                 {{did-insert this.setWagerBox}}
@@ -97,52 +107,61 @@
           <div class="flex items-center flex-wrap space-x-4">
             <button
               class="flex-1"
-              disabled={{or this.state.table.button (if this.wager false true)}}
+              disabled={{or this.state.table.button (if this.wager false true) this.state.busy}}
               type="button"
               {{on "click" (fn this.bet "pass")}}
             >
-              Pass
+              {{t "table_view.bets.pass_line"}}
             </button>
 
             <button
               class="flex-1"
-              disabled={{or (not seat.hasPass) (not this.state.table.button) (if this.wager false true)}}
+              disabled={{or
+                (not seat.hasPass)
+                (not this.state.table.button)
+                (not this.wager)
+                this.state.busy
+              }}
               type="button"
               {{on "click" (fn this.bet "pass-odds")}}
             >
-              Pass Odds
+              {{t "table_view.bets.pass_odds"}}
             </button>
 
             <button
               class="flex-1"
-              disabled={{or (not this.state.table.button) (if this.wager false true)}}
+              disabled={{or
+                (not this.state.table.button)
+                (not this.wager)
+                this.state.busy
+              }}
               type="button"
               {{on "click" (fn this.bet "come")}}
             >
-              Come
+              {{t "table_view.bets.come"}}
             </button>
 
             <button
               class="flex-1"
-              disabled={{not this.wager}}
+              disabled={{or (not this.wager) this.state.busy}}
               type="button"
               {{on "click" (fn this.bet "field")}}
             >
-              Field
+              {{t "table_view.bets.field"}}
             </button>
 
             <HardwayDropdown
-              @disabled={{or (not this.wager) (not this.state.table.button)}}
-              @submit={{this.hardway}}
+              @disabled={{or (not this.wager) (not this.state.table.button) this.state.busy}}
+              @onSelect={{this.hardway}}
             />
 
             <PlaceDropdown
-              @disabled={{or (not this.wager) (not this.state.table.button)}}
-              @place={{this.place}}
+              @disabled={{or (not this.wager) (not this.state.table.button) this.state.busy}}
+              @onSelect={{this.place}}
             />
 
-            <BasicDropdown @disabled={{not seat.comeOddsOptions.length}} as |dropdown|>
-              <dropdown.Trigger class="button flex-1">Come Odds</dropdown.Trigger>
+            <BasicDropdown @disabled={{or this.state.busy (not seat.comeOddsOptions.length)}} as |dropdown|>
+              <dropdown.Trigger class="button flex-1">{{t "table_view.bets.come_odds"}}</dropdown.Trigger>
               <dropdown.Content class="dropdown">
                 {{#each seat.comeOddsOptions as |option|}}
                   <div

@@ -30,6 +30,13 @@ export type Table = {
   rolls: Array<[number, number]>;
 };
 
+export type JobStatus = {
+  id: string;
+  output?: string;
+};
+
+export type BetSubmissionResult = Seidr.Result<Error, BetSubmission>;
+
 async function post<T>(
   url: string,
   body: string
@@ -59,20 +66,26 @@ class Stickbot extends Service {
     return result.map(() => []);
   }
 
+  public async job(id: string): Promise<Seidr.Result<Error, JobStatus>> {
+    const result = await promises.awaitResult(
+      fetchApi(`${config.apiUrl}/job?id=${id}`, {})
+    );
+    return promises.asyncMap(result, (res) => res.json());
+  }
+
   public async roll(
     table: Pick<Table, 'id' | 'nonce'>
-  ): Promise<Seidr.Result<Error, number>> {
+  ): Promise<Seidr.Result<Error, BetSubmission>> {
     debug('attempting to start roll on table "%s"', table.id);
     const body = JSON.stringify({ table: table.id, nonce: table.nonce });
-    await post(`${config.apiUrl}/rolls`, body);
-    return Seidr.Ok(1);
+    return post(`${config.apiUrl}/rolls`, body);
   }
 
   public async hardway(
     table: Pick<Table, 'id' | 'nonce'>,
     target: number,
     amount: number
-  ): Promise<Seidr.Result<Error, BetSubmission>> {
+  ): Promise<BetSubmissionResult> {
     const body = JSON.stringify({
       kind: 'hardway',
       amount,
@@ -87,7 +100,7 @@ class Stickbot extends Service {
     table: Pick<Table, 'id' | 'nonce'>,
     target: number,
     amount: number
-  ): Promise<Seidr.Result<Error, BetSubmission>> {
+  ): Promise<BetSubmissionResult> {
     const body = JSON.stringify({
       kind: 'place',
       amount,
@@ -102,7 +115,7 @@ class Stickbot extends Service {
     table: Pick<Table, 'id' | 'nonce'>,
     target: number,
     amount: number
-  ): Promise<Seidr.Result<Error, BetSubmission>> {
+  ): Promise<BetSubmissionResult> {
     const body = JSON.stringify({
       kind: 'come-odds',
       amount,
@@ -118,7 +131,7 @@ class Stickbot extends Service {
     table: Pick<Table, 'id' | 'nonce'>,
     kind: string,
     amount: number
-  ): Promise<Seidr.Result<Error, BetSubmission>> {
+  ): Promise<BetSubmissionResult> {
     const body = JSON.stringify({
       kind,
       amount,

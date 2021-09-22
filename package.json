@@ -18,7 +18,8 @@
     "lint:js:fix": "eslint . --fix",
     "start": "ember serve",
     "start:proxy": "ember serve --proxy http://0.0.0.0:8611 --port 8711 --proxy-in-timeout 1500",
-    "test:ember": "ember test"
+    "test:ember": "ember test",
+    "ember:install": "ember install"
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
@@ -69,6 +70,7 @@
     "ember-cli-typescript-blueprints": "^3.0.0",
     "ember-export-application-global": "^2.0.1",
     "ember-fetch": "^8.1.1",
+    "ember-intl": "^5.7.0",
     "ember-load-initializers": "^2.1.2",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-page-title": "^6.2.2",

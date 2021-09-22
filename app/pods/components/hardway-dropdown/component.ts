@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 
 class HardwayDropdown extends Component<{
   disabled: boolean;
-  submit: (target: number) => void;
+  onSelect: (target: number) => void;
 }> {}
 
 export default HardwayDropdown;

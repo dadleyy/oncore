@@ -2,7 +2,7 @@
   <CaseOf @kind={{this.model}} as |when|>
     <when.just>
       <nav role="tabpanel">
-        <LinkTo @route="home">Home</LinkTo>
+        <LinkTo @route="home">{{t "application.header.home"}}</LinkTo>
       </nav>
 
       <aside role="menu" class="ml-auto">
@@ -15,10 +15,7 @@
 
 <main class="w-full relative h-full">
   <div class="w-full flex relative h-full">
-    <aside role="tablist" class="pt-2 pl-1 pr-6 border-solid h-full border-gray-300 border-r">
-      Oncore
-    </aside>
-
+    <aside role="tablist" class="pt-2 pl-1 pr-6 border-solid h-full border-gray-300 border-r"></aside>
     <section class="ml-4 pt-2 pl-2 pr-1 flex-1">{{outlet}}</section>
   </div>
 </main>

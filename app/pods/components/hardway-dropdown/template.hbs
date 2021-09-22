@@ -1,14 +1,14 @@
 <BasicDropdown @disabled={{@disabled}} as |dropdown|>
-  <dropdown.Trigger class="button flex-1">Hardways</dropdown.Trigger>
+  <dropdown.Trigger class="button flex-1">{{t "hardway_dropdown.label"}}</dropdown.Trigger>
   <dropdown.Content class="dropdown">
     <div
-      data-role="place-option"
+      data-role="hardway-option"
       type="button"
       role="button"
       class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @submit 4))}}
+      {{on "click" (queue dropdown.actions.close (fn @onSelect 4))}}
     >
-      four
+      {{t "hardway.four"}}
     </div>
 
     <div
@@ -16,29 +16,29 @@
       type="button"
       role="button"
       class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @submit 6))}}
+      {{on "click" (queue dropdown.actions.close (fn @onSelect 6))}}
     >
-      six
+      {{t "hardway.six"}}
     </div>
 
     <div
-      data-role="place-option"
+      data-role="hardway-option"
       type="button"
       role="button"
       class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @submit 8))}}
+      {{on "click" (queue dropdown.actions.close (fn @onSelect 8))}}
     >
-      eight
+      {{t "hardway.eight"}}
     </div>
 
     <div
-      data-role="place-option"
+      data-role="hardway-option"
       type="button"
       role="button"
       class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @submit 10))}}
+      {{on "click" (queue dropdown.actions.close (fn @onSelect 10))}}
     >
-      ten
+      {{t "hardway.ten"}}
     </div>
   </dropdown.Content>
 </BasicDropdown>

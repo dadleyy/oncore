@@ -1,8 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
-import Stickbot from 'oncore/services/stickbot';
-import Session from 'oncore/services/session';
+import * as Stickbot from 'oncore/services/stickbot';
 import { action } from '@ember/object';
 import debugLogger from 'ember-debug-logger';
 import * as State from 'oncore/pods/components/table-view/state';
@@ -20,40 +19,47 @@ class TableView extends Component<{ state: State.State }> {
   public wager = 0;
 
   @service
-  public declare session: Session;
-
-  @service
-  public declare stickbot: Stickbot;
+  public declare stickbot: Stickbot.default;
 
   @tracked
-  public polls: Array<State.State> = [];
-
-  @tracked
-  public pendingJobs: Array<string> = [];
+  public history: Array<State.State> = [];
 
   public get state(): State.State {
-    const { polls } = this;
-    const [first = this.args.state] = polls;
+    const { history } = this;
+    const [first = this.args.state] = history;
     return first;
   }
 
   @action
   public async startPolling(): Promise<void> {
-    const { stickbot, state, session } = this;
+    const { stickbot, state } = this;
     debug('entering poll loop for table "%s"', state.table.id);
-    const current = session.currentSession.getOrElse(undefined);
 
-    while (!this.isDestroyed && current) {
-      debug('fetching new state');
-      const result = await State.load(stickbot, state.table.id, current);
-      const next = result.getOrElse(undefined);
+    while (!this.isDestroyed) {
+      const { state: current } = this;
+      const result = await State.hydrate(stickbot, current);
 
-      if (this.isDestroyed || !next) {
+      if (this.isDestroyed) {
+        debug('breaking poll loop early - component torn down');
         break;
       }
 
+      const next = result.getOrElse(undefined);
+
+      if (!next) {
+        debug('[warning] bad response from api - %j', result);
+        await promises.sleep(POLL_DELAY * 10);
+        continue;
+      }
+
+      if (next.nonce !== this.state.nonce) {
+        debug('stale poll (current %s | loaded %s)', this.state.nonce, next.nonce);
+        await promises.sleep(POLL_DELAY);
+        continue;
+      }
+
       debug('fetched new state');
-      this.polls = [next, ...this.polls].slice(0, 5);
+      this.history = [State.makeBusy(next, this.state.busy), ...this.history].slice(0, 2);
       await promises.sleep(POLL_DELAY);
     }
 
@@ -72,30 +78,53 @@ class TableView extends Component<{ state: State.State }> {
 
   @action
   public async bet(kind: string): Promise<void> {
-    const { wager, stickbot, state, wagerBox } = this;
+    const { wager, stickbot, state } = this;
     debug('placing bet wager "%s"', kind);
+    this.history = [State.makeBusy(state), ...this.history];
     const result = await stickbot.bet(state.table, kind, wager);
-    this.wager = 0;
-    const attempt = result.getOrElse(undefined);
-
-    if (!attempt) {
-      return;
-    }
-
-    debug('attempt made, job "%s"', attempt.job);
-    this.pendingJobs = [attempt.job, ...this.pendingJobs];
-
-    if (wagerBox) {
-      wagerBox.focus();
-    }
+    this.finishBet(result);
   }
 
   @action
   public async comeOdds(target: number): Promise<void> {
     const { wager, state, stickbot } = this;
     debug('taking come "%s" odds on the "%s"', wager, target);
-    await stickbot.odds(state.table, target, wager);
-    this.wager = 0;
+    this.history = [State.makeBusy(state), ...this.history];
+    this.finishBet(await stickbot.odds(state.table, target, wager));
+  }
+
+  @action
+  public async hardway(target: number): Promise<void> {
+    const { wager, state, stickbot } = this;
+    debug('submitting hardway bet for "%s"', target);
+    this.history = [State.makeBusy(state), ...this.history];
+    this.finishBet(await stickbot.hardway(state.table, target, wager));
+  }
+
+  @action
+  public async place(target: number): Promise<void> {
+    const { wager, state, stickbot } = this;
+    debug('submitting place bet for "%s"', target);
+    this.history = [State.makeBusy(state), ...this.history];
+    this.finishBet(await stickbot.place(state.table, target, wager));
+  }
+
+  @action
+  public async roll(): Promise<void> {
+    const { state, stickbot } = this;
+    const start = State.makeBusy(state);
+    this.history = [start, ...this.history];
+    const result = await stickbot.roll(state.table);
+
+    const next = result.caseOf({
+      Err: (error) => {
+        debug('[warning] roll submission failed - %s', error);
+        return state;
+      },
+      Ok: (job) => State.setPendingRoll(start, { id: job.job }),
+    });
+
+    this.history = [State.makeBusy(next, false), ...this.history];
   }
 
   @action
@@ -103,27 +132,25 @@ class TableView extends Component<{ state: State.State }> {
     this.wagerBox = element;
   }
 
-  @action
-  public async hardway(target: number): Promise<void> {
-    const { wager, state, stickbot } = this;
-    debug('submitting hardway bet for "%s"', target);
-    await stickbot.hardway(state.table, target, wager);
-    this.wager = 0;
-  }
+  private finishBet(result: Stickbot.BetSubmissionResult): void {
+    const { state: current, wagerBox } = this;
 
-  @action
-  public async place(target: number): Promise<void> {
-    const { wager, state, stickbot } = this;
-    debug('submitting place bet for "%s"', target);
-    await stickbot.place(state.table, target, wager);
-    this.wager = 0;
-  }
+    debug('applying pending bet "%j"', result);
 
-  @action
-  public async roll(): Promise<void> {
-    const { state, stickbot } = this;
-    debug('rolling the dice!');
-    await stickbot.roll(state.table);
+    const next = result.caseOf({
+      Err: (error) => {
+        debug('[warn] bet submission totally failed %s', error);
+        return current;
+      },
+      Ok: (job) => State.addPendingBet(current, { id: job.job }),
+    });
+
+    this.history = [State.makeBusy(next, false), ...this.history];
+
+    this.wager = 0;
+    if (wagerBox) {
+      wagerBox.focus();
+    }
   }
 }
 

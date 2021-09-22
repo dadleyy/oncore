@@ -1,0 +1,45 @@
+application:
+  header:
+    home: "Home"
+home:
+  actions:
+    view_table: "View"
+    leave_table: "Leave"
+    join_table: "Join"
+  columns:
+    table_id: "Table"
+    actions: "Actions"
+login:
+  login: "Log In"
+table_view:
+  roller: "Roller"
+  roll_total: "Roll Total"
+  roll_history: "Roll History"
+  version: "Version"
+  button: "Button"
+  balance: "Balance"
+  wager: "Wager"
+  wins_on: "Wins On"
+  bet_kind: "Kind"
+  no_bets: "No Bets"
+  pending: "Pending"
+  roll: "Roll"
+  rolling: "Rolling..."
+  bets:
+    come: "Come"
+    pass_line: "Pass"
+    pass_odds: "Odds"
+    come_odds: "Come Odds"
+    field: "Field"
+place_dropdown:
+  label: "Place Bets"
+hardway_dropdown:
+  label: "Hardways"
+bets:
+  common:
+    four: "Four"
+    six: "Six"
+    five: "Five"
+    eight: "Eight"
+    nine: "Nine"
+    ten: "Ten"

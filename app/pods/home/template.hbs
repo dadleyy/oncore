@@ -3,8 +3,8 @@
     <table class="table-fixed w-full">
       <thead>
         <tr>
-          <th>id</th>
-          <th>join</th>
+          <th>{{t "home.columns.table_id"}}</th>
+          <th>{{t "home.columns.actions"}}</th>
         </tr>
       </thead>
       <tbody>
@@ -13,10 +13,10 @@
             <td>{{row.table.id}}</td>
             <td>
               {{#if row.joined}}
-                <LinkTo @route="tables.single-table" @model={{row.table.id}}>view</LinkTo>
-                <a href="#" {{on "click" (fn this.leaveTable row.table)}}>leave</a>
+                <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>
+                <a href="#" {{on "click" (fn this.leaveTable row.table)}}>{{t "home.actions.leave_table"}}</a>
               {{else}}
-                <a href="#" {{on "click" (fn this.joinTable row.table)}}>join</a>
+                <a href="#" {{on "click" (fn this.joinTable row.table)}}>{{t "home.actions.join_table"}}</a>
               {{/if}}
             </td>
           </tr>

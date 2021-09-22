@@ -8,6 +8,7 @@ const tailwindcss = require('tailwindcss');
 
 module.exports = function (defaults) {
   let app = new EmberApp(defaults, {
+    fontawesome: {},
     postcssOptions: {
       compile: {
         enabled: true,

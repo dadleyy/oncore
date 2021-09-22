@@ -3,7 +3,8 @@ import { dasherize } from '@ember/string';
 import debugLogger from 'ember-debug-logger';
 import * as Stickbot from 'oncore/services/stickbot';
 import { CurrentSession } from 'oncore/services/session';
-import * as helpers from 'oncore/utility/maybe-helpers';
+import * as maybeHelpers from 'oncore/utility/maybe-helpers';
+import * as uuid from 'oncore/utility/uuid';
 
 const debug = debugLogger('util:table-view.state');
 
@@ -28,10 +29,19 @@ export type ParsedRoll = {
   total: number;
 };
 
+export type PendingJob = {
+  id: string;
+};
+
 export type State = {
+  busy: boolean;
   rollHistory: Array<ParsedRoll>;
   table: Stickbot.Table;
   playerPosition: Seidr.Maybe<Seat>;
+  session: CurrentSession;
+  pendingBets: Array<PendingJob>;
+  pendingRoll: Seidr.Maybe<PendingJob>;
+  nonce: string;
 };
 
 function parseBet(input: Stickbot.Bet): ParsedBet {
@@ -75,7 +85,17 @@ function parseTable(table: Stickbot.Table, session: CurrentSession): State {
     right,
     total: left + right,
   }));
-  return { table, playerPosition, rollHistory };
+
+  return {
+    table,
+    playerPosition,
+    rollHistory,
+    session,
+    pendingBets: [],
+    pendingRoll: Seidr.Nothing(),
+    busy: false,
+    nonce: uuid.generate(),
+  };
 }
 
 export function fromTables(
@@ -85,7 +105,50 @@ export function fromTables(
 ): Seidr.Result<Error, State> {
   const maybeTable = Seidr.Maybe.fromNullable(tables.find((t) => t.id === id));
   const model = maybeTable.map((table) => parseTable(table, session));
-  return helpers.orErr(new Error('not-found'), model);
+  return maybeHelpers.orErr(new Error('not-found'), model);
+}
+
+export function setPendingRoll(state: State, job: PendingJob): State {
+  return {
+    ...state,
+    pendingRoll: Seidr.Just(job),
+    nonce: uuid.generate(),
+  };
+}
+
+export function addPendingBet(state: State, job: PendingJob): State {
+  return {
+    ...state,
+    pendingBets: [job, ...state.pendingBets],
+    nonce: uuid.generate(),
+  };
+}
+
+export function makeBusy(state: State, busy = true): State {
+  return { ...state, busy };
+}
+
+export async function hydrate(stickbot: Stickbot.default, state: State): Promise<Seidr.Result<Error, State>> {
+  const { pendingBets: jobs, pendingRoll: roll } = state;
+  const start = await load(stickbot, state.table.id, state.session);
+  const fetches = await Promise.all(jobs.map((job) => stickbot.job(job.id)));
+
+  const pendingBets = maybeHelpers
+    .flatten(fetches.map((result) => result.toMaybe()))
+    .filter((status) => !status.output);
+
+  const pendingRoll = (await maybeHelpers.asyncMap(roll, (job) => stickbot.job(job.id)))
+    .flatMap((inner) => inner.toMaybe())
+    .flatMap((status) => (status.output ? Seidr.Nothing() : Seidr.Just({ id: status.id })));
+
+  debug('finished reloading (busy "%s")', state.busy);
+  return start.map((next) => ({
+    ...next,
+    pendingBets,
+    pendingRoll,
+    busy: state.busy,
+    nonce: state.nonce,
+  }));
 }
 
 export async function load(

@@ -16,3 +16,20 @@ export function orErr<T>(
     Nothing: () => Seidr.Err(error),
   });
 }
+
+export function flatten<T>(maybes: Array<Seidr.Maybe<T>>): Array<T> {
+  return maybes.reduce(
+    (acc, mayb) => [...acc, ...mayb.map((item) => [item]).getOrElse([])],
+    []
+  );
+}
+
+export async function asyncMap<T, U>(
+  maybe: Seidr.Maybe<T>,
+  mapper: (input: T) => Promise<U>
+): Promise<Seidr.Maybe<U>> {
+  return maybe.caseOf({
+    Just: async (inner) => Seidr.Just(await mapper(inner)),
+    Nothing: () => Promise.resolve(Seidr.Nothing()),
+  });
+}
