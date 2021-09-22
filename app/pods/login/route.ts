@@ -24,10 +24,7 @@ class LoginRoute extends Route {
       return;
     }
 
-    debug(
-      'login route, rendering link - "%s"',
-      config.externalRoutes.auth.start
-    );
+    debug('login route, rendering link - "%s"', config.externalRoutes.auth.start);
   }
 }
 

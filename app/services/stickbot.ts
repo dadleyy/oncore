@@ -37,17 +37,12 @@ export type JobStatus = {
 
 export type BetSubmissionResult = Seidr.Result<Error, BetSubmission>;
 
-async function post<T>(
-  url: string,
-  body: string
-): Promise<Seidr.Result<Error, T>> {
+async function post<T>(url: string, body: string): Promise<Seidr.Result<Error, T>> {
   const headers = { 'Content-Type': 'application/json' };
   const attempt = fetchApi(url, { method: 'POST', body, headers });
   const response = await promises.awaitResult(attempt);
   const safe = response.flatMap((response) =>
-    response.status === 200
-      ? Seidr.Ok(response)
-      : Seidr.Err(new Error('bad-response'))
+    response.status === 200 ? Seidr.Ok(response) : Seidr.Err(new Error('bad-response'))
   );
   return promises.asyncMap(safe, (response) => response.json());
 }
@@ -67,15 +62,11 @@ class Stickbot extends Service {
   }
 
   public async job(id: string): Promise<Seidr.Result<Error, JobStatus>> {
-    const result = await promises.awaitResult(
-      fetchApi(`${config.apiUrl}/job?id=${id}`, {})
-    );
+    const result = await promises.awaitResult(fetchApi(`${config.apiUrl}/job?id=${id}`, {}));
     return promises.asyncMap(result, (res) => res.json());
   }
 
-  public async roll(
-    table: Pick<Table, 'id' | 'nonce'>
-  ): Promise<Seidr.Result<Error, BetSubmission>> {
+  public async roll(table: Pick<Table, 'id' | 'nonce'>): Promise<Seidr.Result<Error, BetSubmission>> {
     debug('attempting to start roll on table "%s"', table.id);
     const body = JSON.stringify({ table: table.id, nonce: table.nonce });
     return post(`${config.apiUrl}/rolls`, body);
@@ -96,11 +87,7 @@ class Stickbot extends Service {
     return await post<BetSubmission>(`${config.apiUrl}/bets`, body);
   }
 
-  public async place(
-    table: Pick<Table, 'id' | 'nonce'>,
-    target: number,
-    amount: number
-  ): Promise<BetSubmissionResult> {
+  public async place(table: Pick<Table, 'id' | 'nonce'>, target: number, amount: number): Promise<BetSubmissionResult> {
     const body = JSON.stringify({
       kind: 'place',
       amount,
@@ -111,11 +98,7 @@ class Stickbot extends Service {
     return await post<BetSubmission>(`${config.apiUrl}/bets`, body);
   }
 
-  public async odds(
-    table: Pick<Table, 'id' | 'nonce'>,
-    target: number,
-    amount: number
-  ): Promise<BetSubmissionResult> {
+  public async odds(table: Pick<Table, 'id' | 'nonce'>, target: number, amount: number): Promise<BetSubmissionResult> {
     const body = JSON.stringify({
       kind: 'come-odds',
       amount,
@@ -127,11 +110,7 @@ class Stickbot extends Service {
     return submission;
   }
 
-  public async bet(
-    table: Pick<Table, 'id' | 'nonce'>,
-    kind: string,
-    amount: number
-  ): Promise<BetSubmissionResult> {
+  public async bet(table: Pick<Table, 'id' | 'nonce'>, kind: string, amount: number): Promise<BetSubmissionResult> {
     const body = JSON.stringify({
       kind,
       amount,
@@ -145,12 +124,8 @@ class Stickbot extends Service {
   }
 
   public async tables(): Promise<Seidr.Result<Error, Array<Table>>> {
-    const result = await promises.awaitResult(
-      fetchApi(`${config.apiUrl}/tables`)
-    );
-    const tables = await promises.asyncMap(result, (response) =>
-      response.json()
-    );
+    const result = await promises.awaitResult(fetchApi(`${config.apiUrl}/tables`));
+    const tables = await promises.asyncMap(result, (response) => response.json());
     return tables;
   }
 }

@@ -35,15 +35,11 @@ class TableRoute extends Route {
     }
   }
 
-  public async model(
-    params: Params
-  ): Promise<Seidr.Result<Error, State.State>> {
+  public async model(params: Params): Promise<Seidr.Result<Error, State.State>> {
     const { stickbot, session } = this;
     const identity = helpers.orErr(new Error('unauth'), session.currentSession);
     debug('loading table details - "%s"', params.table);
-    return await promises.asyncFlatMap(identity, (session) =>
-      State.load(stickbot, params.table, session)
-    );
+    return await promises.asyncFlatMap(identity, (session) => State.load(stickbot, params.table, session));
   }
 }
 

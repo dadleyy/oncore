@@ -1,8 +1,6 @@
 import * as Seidr from 'seidr';
 
-export async function awaitResult<T>(
-  promise: Promise<T>
-): Promise<Seidr.Result<Error, T>> {
+export async function awaitResult<T>(promise: Promise<T>): Promise<Seidr.Result<Error, T>> {
   try {
     const data = await promise;
     return Seidr.Ok(data);

@@ -15,10 +15,7 @@ class RouterUtils extends Service {
     return this.router.currentRouteName;
   }
 
-  public transitionTo(
-    destination: string,
-    ...other: Array<unknown>
-  ): Transition {
+  public transitionTo(destination: string, ...other: Array<unknown>): Transition {
     const { router } = this;
     return router.transitionTo.call(router, destination, ...other);
   }
@@ -31,9 +28,7 @@ class RouterUtils extends Service {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line ember/no-private-routing-service
-    const info = router._router._routerMicrolib.state.routeInfos.find(
-      (info: { name: string }) => info.name === name
-    );
+    const info = router._router._routerMicrolib.state.routeInfos.find((info: { name: string }) => info.name === name);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
