@@ -6,6 +6,7 @@ import { action } from '@ember/object';
 import debugLogger from 'ember-debug-logger';
 import * as State from 'oncore/pods/components/table-view/state';
 import * as promises from 'oncore/utility/promise-helpers';
+import * as BetAttempts from 'oncore/pods/components/bet-controls/bet-attempt';
 
 const debug = debugLogger('component:table-view');
 
@@ -78,6 +79,11 @@ class TableView extends Component<{ state: State.State }> {
     });
 
     this.history = [State.makeBusy(next, false), ...this.history];
+  }
+
+  @action
+  public async bet(attempt: BetAttempts.default): Promise<void> {
+    debug('attempting to make bet "%j"', attempt);
   }
 
   public finishBet(result: Stickbot.BetSubmissionResult): void {

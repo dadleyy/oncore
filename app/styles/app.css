@@ -12,6 +12,13 @@ html {
   @apply text-gray-800;
 }
 
+#modal-container {
+  @apply absolute w-full overflow-visible z-20;
+  top: 0;
+  left: 0;
+  height: 0;
+}
+
 button,
 .button {
   @apply px-2 py-1 bg-blue-400 rounded-sm text-white border-blue-500 border-solid border inline-block;
@@ -62,4 +69,29 @@ a:hover {
 
 .dropdown-option:hover {
   @apply bg-gray-100;
+}
+
+.modal-content {
+  @apply inline-block p-8 border border-solid border-gray-600 bg-white z-30 relative;
+  @apply rounded-sm shadow-sm;
+  margin: auto;
+}
+
+.modal-overlay,
+.modal-positioner,
+.modal-outer {
+  @apply absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+.modal-overlay {
+  @apply bg-white z-20;
+  opacity: 0.75;
+}
+
+.modal-positioner {
+  @apply flex items-center;
 }

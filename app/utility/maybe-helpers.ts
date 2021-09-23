@@ -11,6 +11,10 @@ export function orErr<T>(error: Error, maybe: Seidr.Maybe<T>): Seidr.Result<Erro
   });
 }
 
+export function collect<T>(maybe: Seidr.Maybe<Seidr.Maybe<T>>): Seidr.Maybe<T> {
+  return maybe.flatMap((inner) => inner);
+}
+
 export function flatten<T>(maybes: Array<Seidr.Maybe<T>>): Array<T> {
   return maybes.reduce((acc, mayb) => [...acc, ...mayb.map((item) => [item]).getOrElse([])], []);
 }

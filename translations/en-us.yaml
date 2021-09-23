@@ -1,3 +1,4 @@
+wager_input_placeholder: "Enter Wager Amount"
 application:
   header:
     home: "Home"

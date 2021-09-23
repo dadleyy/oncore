@@ -28,7 +28,7 @@ class Session extends Service {
     const res = await promises.awaitResult(fetch(`${config.apiUrl}/auth/identify`));
     const response = res.getOrElse(undefined);
 
-    if (!response) {
+    if (!response || !response.status) {
       debug('[warning] fatal network fail on session fetch');
       return Seidr.Nothing();
     }

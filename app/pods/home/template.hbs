@@ -1,4 +1,7 @@
 <CaseOf @kind={{this.model}} as |case|>
+  <case.err>
+    <div data-role="error">{{t "errors.home.failed_load"}}</div>
+  </case.err>
   <case.ok as |model|>
     <table class="table-fixed w-full">
       <thead>

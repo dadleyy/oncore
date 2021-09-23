@@ -1,0 +1,17 @@
+<Modal @key={{this.key}}>
+  <:overlay as |overlay|><overlay.overlay /></:overlay>
+
+  <:content>
+    <label>
+      <input
+        type="text"
+        placeholder={{t "wager_input_placeholder"}}
+        value={{this.wager}}
+        valid={{is-just this.valid}}
+        {{on "input" this.input}}
+        {{did-insert this.focus}}
+        {{on-key "_all" this.submit}}
+      />
+    </label>
+  </:content>
+</Modal>

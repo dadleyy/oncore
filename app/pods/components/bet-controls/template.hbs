@@ -1,4 +1,4 @@
-<div data-role="bet-controls" ...attributes>
+<div {{on-key "_all" this.sequence}} data-role="bet-controls" ...attributes>
   <button
     class="flex-1"
     disabled={{or @button @busy}}
@@ -61,4 +61,6 @@
       {{/each}}
     </dropdown.Content>
   </BasicDropdown>
+
+  <BetControls::WagerInputModal />
 </div>

@@ -1,4 +1,7 @@
 <CaseOf @kind={{this.model}} as |when|>
+  <when.err>
+    <div data-role="error">{{t "errors.single_table.failed_load"}}</div>
+  </when.err>
   <when.ok as |model|>
     <TableView @state={{model}} />
   </when.ok>
