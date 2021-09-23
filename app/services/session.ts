@@ -4,6 +4,7 @@ import * as Seidr from 'seidr';
 import debugLogger from 'ember-debug-logger';
 import fetch from 'fetch';
 import config from 'oncore/config/environment';
+import * as promises from 'oncore/utility/promise-helpers';
 
 const debug = debugLogger('service:session');
 
@@ -24,7 +25,13 @@ class Session extends Service {
   }
 
   public async identify(): Promise<Seidr.Maybe<CurrentSession>> {
-    const response = await fetch(`${config.apiUrl}/auth/identify`);
+    const res = await promises.awaitResult(fetch(`${config.apiUrl}/auth/identify`));
+    const response = res.getOrElse(undefined);
+
+    if (!response) {
+      debug('[warning] fatal network fail on session fetch');
+      return Seidr.Nothing();
+    }
 
     if (response.status !== 200) {
       this.balance = 0;
