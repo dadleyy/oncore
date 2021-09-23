@@ -4,6 +4,7 @@
   class="flex items-start w-full"
   {{did-insert this.startPolling}}
   {{on-key "r" this.roll}}
+  {{on-key "_all" this.shortcut}}
 >
   <div data-role="table-history" class="w-1/6 mr-4">
     <table class="table-fixed w-full">
@@ -16,8 +17,12 @@
       <tbody>
         {{#each this.state.rollHistory key="@index" as |roll index|}}
           <tr class={{if (eq index 0) "bg-gray-100" "text-gray-400"}}>
-            <td>{{roll.left}}</td>
-            <td>{{roll.right}}</td>
+            <td>
+              <DiceIcon @roll={{roll.left}} class="text-xl" />
+            </td>
+            <td>
+              <DiceIcon @roll={{roll.right}} class="text-xl" />
+            </td>
             <td><b>{{roll.total}}</b></td>
           </tr>
         {{/each}}

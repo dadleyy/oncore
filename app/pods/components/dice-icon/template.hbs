@@ -1,0 +1,17 @@
+<div data-role="dice-icon" ...attributes>
+  {{#if (eq @roll 1)}}
+    <i class="fas fa-dice-one" />
+  {{else if (eq @roll 2)}}
+    <i class="fas fa-dice-two" />
+  {{else if (eq @roll 3)}}
+    <i class="fas fa-dice-three" />
+  {{else if (eq @roll 4)}}
+    <i class="fas fa-dice-four" />
+  {{else if (eq @roll 5)}}
+    <i class="fas fa-dice-five" />
+  {{else if (eq @roll 6)}}
+    <i class="fas fa-dice-six" />
+  {{else}}
+    {{@roll}}
+  {{/if}}
+</div>

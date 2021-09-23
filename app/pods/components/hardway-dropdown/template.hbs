@@ -1,44 +1,62 @@
-<BasicDropdown @disabled={{@disabled}} as |dropdown|>
-  <dropdown.Trigger class="button flex-1">{{t "hardway_dropdown.label"}}</dropdown.Trigger>
-  <dropdown.Content class="dropdown">
-    <div
-      data-role="hardway-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 4))}}
-    >
-      {{t "hardway.four"}}
-    </div>
+<div data-role="hardway-dropdown">
+  <BasicDropdown @disabled={{@disabled}} as |dropdown|>
+    <dropdown.Trigger class="button flex-1">{{t "hardway_dropdown.label"}}</dropdown.Trigger>
+    <dropdown.Content class="dropdown">
+      <div
+        data-role="hardway-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 4))}}
+      >
+        <div class="mr-4 text-gray-600">
+          <i class="fas fa-dice-two" />
+          <i class="fas fa-dice-two" />
+        </div>
+        <span class="inline-block">{{t "bets.hardway.four"}}</span>
+      </div>
 
-    <div
-      data-role="place-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 6))}}
-    >
-      {{t "hardway.six"}}
-    </div>
+      <div
+        data-role="place-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 6))}}
+      >
+        <div class="mr-4 text-gray-600">
+          <i class="fas fa-dice-three" />
+          <i class="fas fa-dice-three" />
+        </div>
+        <span class="inline-block">{{t "bets.hardway.six"}}</span>
+      </div>
 
-    <div
-      data-role="hardway-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 8))}}
-    >
-      {{t "hardway.eight"}}
-    </div>
+      <div
+        data-role="hardway-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 8))}}
+      >
+        <div class="mr-4 text-gray-600">
+          <i class="fas fa-dice-four" />
+          <i class="fas fa-dice-four" />
+        </div>
+        <span class="inline-block">{{t "bets.hardway.eight"}}</span>
+      </div>
 
-    <div
-      data-role="hardway-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 10))}}
-    >
-      {{t "hardway.ten"}}
-    </div>
-  </dropdown.Content>
-</BasicDropdown>
+      <div
+        data-role="hardway-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 10))}}
+      >
+        <div class="mr-4 text-gray-600">
+          <i class="fas fa-dice-five" />
+          <i class="fas fa-dice-five" />
+        </div>
+        <span class="inline-block">{{t "bets.hardway.ten"}}</span>
+      </div>
+    </dropdown.Content>
+  </BasicDropdown>
+</div>

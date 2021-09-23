@@ -43,3 +43,8 @@ bets:
     eight: "Eight"
     nine: "Nine"
     ten: "Ten"
+  hardway:
+    four: "Hard Four"
+    six: "Hard Six"
+    eight: "Hard Eight"
+    ten: "Hard Ten"

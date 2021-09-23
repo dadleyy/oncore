@@ -8,6 +8,10 @@ html, body {
 @tailwind components;
 @tailwind utilities;
 
+html {
+  @apply text-gray-800;
+}
+
 button,
 .button {
   @apply px-2 py-1 bg-blue-400 rounded-sm text-white border-blue-500 border-solid border inline-block;
@@ -48,12 +52,12 @@ a:hover {
 }
 
 .dropdown {
-  @apply bg-white border-solid border border-gray-400 rounded-sm;
+  @apply bg-white border-solid border border-gray-400 rounded-sm shadow-sm;
   min-width: 200px;
 }
 
 .dropdown-option {
-  @apply cursor-pointer px-3 py-2;
+  @apply cursor-pointer px-3 py-2 flex items-center;
 }
 
 .dropdown-option:hover {

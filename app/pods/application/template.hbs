@@ -2,7 +2,10 @@
   <CaseOf @kind={{this.model}} as |when|>
     <when.just>
       <nav role="tabpanel">
-        <LinkTo @route="home">{{t "application.header.home"}}</LinkTo>
+        <LinkTo @route="home">
+          <i class="fas fa-home" />
+          {{t "application.header.home"}}
+        </LinkTo>
       </nav>
 
       <aside role="menu" class="ml-auto">

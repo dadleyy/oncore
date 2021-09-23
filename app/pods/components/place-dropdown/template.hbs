@@ -1,64 +1,66 @@
-<BasicDropdown @disabled={{@disabled}} as |dropdown|>
-  <dropdown.Trigger class="button flex-1">{{t "place_dropdown.label"}}</dropdown.Trigger>
-  <dropdown.Content class="dropdown">
-    <div
-      data-role="place-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 4))}}
-    >
-      {{t "bets.common.four"}}
-    </div>
+<div data-role="place-dropdown">
+  <BasicDropdown @disabled={{@disabled}} as |dropdown|>
+    <dropdown.Trigger class="button flex-1">{{t "place_dropdown.label"}}</dropdown.Trigger>
+    <dropdown.Content class="dropdown">
+      <div
+        data-role="place-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 4))}}
+      >
+        <span class="inline-block">{{t "bets.common.four"}}</span>
+      </div>
 
-    <div
-      data-role="place-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 5))}}
-    >
-      {{t "bets.common.five"}}
-    </div>
+      <div
+        data-role="place-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 5))}}
+      >
+        {{t "bets.common.five"}}
+      </div>
 
-    <div
-      data-role="place-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 6))}}
-    >
-      {{t "bets.common.six"}}
-    </div>
+      <div
+        data-role="place-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 6))}}
+      >
+        {{t "bets.common.six"}}
+      </div>
 
-    <div
-      data-role="place-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 8))}}
-    >
-      {{t "bets.common.eight"}}
-    </div>
+      <div
+        data-role="place-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 8))}}
+      >
+        {{t "bets.common.eight"}}
+      </div>
 
-    <div
-      data-role="place-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 9))}}
-    >
-      {{t "bets.common.nine"}}
-    </div>
+      <div
+        data-role="place-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 9))}}
+      >
+        {{t "bets.common.nine"}}
+      </div>
 
-    <div
-      data-role="place-option"
-      type="button"
-      role="button"
-      class="dropdown-option"
-      {{on "click" (queue dropdown.actions.close (fn @onSelect 10))}}
-    >
-      {{t "bets.common.ten"}}
-    </div>
-  </dropdown.Content>
-</BasicDropdown>
+      <div
+        data-role="place-option"
+        type="button"
+        role="button"
+        class="dropdown-option"
+        {{on "click" (queue dropdown.actions.close (fn @onSelect 10))}}
+      >
+        {{t "bets.common.ten"}}
+      </div>
+    </dropdown.Content>
+  </BasicDropdown>
+</div>
