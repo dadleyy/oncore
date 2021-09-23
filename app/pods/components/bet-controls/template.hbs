@@ -1,0 +1,64 @@
+<div data-role="bet-controls" ...attributes>
+  <button
+    class="flex-1"
+    disabled={{or @button @busy}}
+    type="button"
+    {{on "click" (fn this.bet "pass")}}
+  >
+    {{t "table_view.bets.pass_line"}}
+  </button>
+
+  <button
+    class="flex-1"
+    disabled={{or (not this.hasPass) (not @button) @busy}}
+    type="button"
+    {{on "click" (fn this.bet "pass-odds")}}
+  >
+    {{t "table_view.bets.pass_odds"}}
+  </button>
+
+  <button
+    class="flex-1"
+    disabled={{or (not @button) @busy}}
+    type="button"
+    {{on "click" (fn this.bet "come")}}
+  >
+    {{t "table_view.bets.come"}}
+  </button>
+
+  <button
+    class="flex-1"
+    disabled={{this.state.busy}}
+    type="button"
+    {{on "click" (fn this.bet "field")}}
+  >
+    {{t "table_view.bets.field"}}
+  </button>
+
+  <HardwayDropdown
+    @disabled={{or (not @button) @busy}}
+    @onSelect={{fn this.bet "hardway"}}
+  />
+
+  <PlaceDropdown
+    @disabled={{or (not @button) @busy}}
+    @onSelect={{fn this.bet "place"}}
+  />
+
+  <BasicDropdown @disabled={{or @busy (not this.comeOddsOptions.length)}} as |dropdown|>
+    <dropdown.Trigger class="button flex-1">{{t "table_view.bets.come_odds"}}</dropdown.Trigger>
+    <dropdown.Content class="dropdown">
+      {{#each this.comeOddsOptions as |option|}}
+        <div
+          data-role="come-odds-option"
+          class="dropdown-option"
+          type="button"
+          role="button"
+          {{on "click" (queue dropdown.actions.close (fn this.bet "come-odds" option))}}
+        >
+          {{option}}
+        </div>
+      {{/each}}
+    </dropdown.Content>
+  </BasicDropdown>
+</div>

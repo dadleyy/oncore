@@ -9,8 +9,8 @@ import * as uuid from 'oncore/utility/uuid';
 const debug = debugLogger('util:table-view.state');
 
 export type ParsedBet = {
-  kind: string;
   state: Stickbot.Bet;
+  kind: string;
   amount: number;
   target: number | null;
 };

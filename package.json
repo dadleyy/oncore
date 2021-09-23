@@ -16,6 +16,7 @@
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint .",
     "lint:js:fix": "eslint . --fix",
+    "lint:deps": "ember dependency-lint",
     "start": "ember serve",
     "start:proxy": "ember serve --proxy http://0.0.0.0:8611 --port 8711 --proxy-in-timeout 1500",
     "test:ember": "ember test",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
+    "@ember/render-modifiers": "^1.0.2",
     "@ember/test-helpers": "^2.4.2",
     "@embroider/compat": "^0.43.5",
     "@embroider/core": "^0.43.5",
@@ -57,10 +59,12 @@
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^1.11.3",
+    "ember-basic-dropdown": "^3.0.19",
     "ember-cli": "~3.28.0",
     "ember-cli-app-version": "^5.0.0",
     "ember-cli-babel": "^7.26.6",
     "ember-cli-dependency-checker": "^3.2.0",
+    "ember-cli-dependency-lint": "^2.0.1",
     "ember-cli-htmlbars": "^5.7.1",
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-postcss": "^7.0.2",
@@ -68,9 +72,12 @@
     "ember-cli-terser": "^4.0.2",
     "ember-cli-typescript": "^4.2.1",
     "ember-cli-typescript-blueprints": "^3.0.0",
+    "ember-composable-helpers": "^4.5.0",
+    "ember-debug-logger": "^2.1.1",
     "ember-export-application-global": "^2.0.1",
     "ember-fetch": "^8.1.1",
     "ember-intl": "^5.7.0",
+    "ember-keyboard": "^6.0.3",
     "ember-load-initializers": "^2.1.2",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-page-title": "^6.2.2",
@@ -78,6 +85,7 @@
     "ember-resolver": "^8.0.2",
     "ember-source": "~3.28.0",
     "ember-template-lint": "^3.6.0",
+    "ember-truth-helpers": "^3.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-ember": "^10.5.4",
@@ -88,6 +96,8 @@
     "prettier": "^2.3.2",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.6.0",
+    "seidr": "^1.8.0",
+    "sums-up": "^2.2.0",
     "tailwindcss": "^2.2.15",
     "typescript": "^4.4.3",
     "webpack": "^5.51.1"
@@ -98,14 +108,5 @@
   "ember": {
     "edition": "octane"
   },
-  "dependencies": {
-    "@ember/render-modifiers": "^1.0.2",
-    "ember-basic-dropdown": "^3.0.19",
-    "ember-composable-helpers": "^4.5.0",
-    "ember-debug-logger": "^2.1.1",
-    "ember-keyboard": "^6.0.3",
-    "ember-truth-helpers": "^3.0.0",
-    "seidr": "^1.8.0",
-    "sums-up": "^2.2.0"
-  }
+  "dependencies": {}
 }
