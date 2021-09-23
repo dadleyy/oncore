@@ -5,11 +5,11 @@ const debug = debugLogger('utility:table-view.keyboard');
 
 export type Timer = ReturnType<typeof setTimeout>;
 
-type ComeKeyCommand = { type: "come" };
-type PassOddsKeyCommand = { type: "pass-odds" };
-type PassKeyCommand = { type: "pass" };
-type FieldKeyCommand = { type: "field" };
-type PlaceKeyCommand = { type: "place", target: number };
+type ComeKeyCommand = { type: 'come' };
+type PassOddsKeyCommand = { type: 'pass-odds' };
+type PassKeyCommand = { type: 'pass' };
+type FieldKeyCommand = { type: 'field' };
+type PlaceKeyCommand = { type: 'place'; target: number };
 type KeyCommand = ComeKeyCommand | PassOddsKeyCommand | PassKeyCommand | FieldKeyCommand | PlaceKeyCommand;
 
 export type Keyboard = {
@@ -24,19 +24,19 @@ export function parse(keyboard: Keyboard): Seidr.Maybe<KeyCommand> {
 
   if (first === 'b' && second === 'c') {
     debug('found come bet command');
-    return Seidr.Just({ type: "come" });
+    return Seidr.Just({ type: 'come' });
   }
 
   if (first === 'b' && second === 'p') {
-    return Seidr.Just({ type: "pass" });
+    return Seidr.Just({ type: 'pass' });
   }
 
   if (first === 'b' && second === 'f') {
-    return Seidr.Just({ type: "field" });
+    return Seidr.Just({ type: 'field' });
   }
 
   if (first === 'b' && second === 'o') {
-    return Seidr.Just({ type: "pass-odds" });
+    return Seidr.Just({ type: 'pass-odds' });
   }
 
   if (first === 'b' && second === 't') {
@@ -45,7 +45,7 @@ export function parse(keyboard: Keyboard): Seidr.Maybe<KeyCommand> {
     switch (third) {
       case '4':
         debug('valid place bet on 4');
-        return Seidr.Just({ type: "place", target: 4 });
+        return Seidr.Just({ type: 'place', target: 4 });
       default:
         debug('unrecognized third key "%s"', third);
     }

@@ -44,7 +44,6 @@ class TableView extends Component<{ state: State.State }> {
 
     const next = keyboard.apply(current, event.key);
 
-
     const id = setTimeout(() => {
       debug('clearing current sequence, timeout');
       this.keyboard = keyboard.empty();
@@ -62,19 +61,19 @@ class TableView extends Component<{ state: State.State }> {
     event.stopPropagation();
 
     switch (command.type) {
-      case "field":
-        this.bet("field")
+      case 'field':
+        this.bet('field');
         break;
-      case "pass":
-        this.bet("pass")
+      case 'pass':
+        this.bet('pass');
         break;
-      case "pass-odds":
-        this.bet("pass-odds")
+      case 'pass-odds':
+        this.bet('pass-odds');
         break;
-      case "come":
-        this.bet("come");
+      case 'come':
+        this.bet('come');
         break;
-      case "place":
+      case 'place':
         debug('submitting place bet for "%s"', command.target);
         break;
       default:
