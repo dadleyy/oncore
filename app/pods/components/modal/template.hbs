@@ -1,13 +1,15 @@
-{{#if this.active}}
-  <EmberWormhole @to="modal-container">
-    <div class="modal-outer" {{on-key "_all" this.input}}>
-      {{yield (hash overlay=(component 'modal/yield' class="modal-overlay")) to="overlay"}}
+<CaseOf @kind={{this.active}} as |when|>
+  <when.just as |data|>
+    <EmberWormhole @to="modal-container">
+      <div class="modal-outer" {{on-key "_all" this.input}}>
+        {{yield (hash overlay=(component 'modal/yield' class="modal-overlay")) to="overlay"}}
 
-      <div class="modal-positioner">
-        <div class="modal-content" ...attributes>
-          {{yield to="content"}}
+        <div class="modal-positioner">
+          <div class="modal-content" ...attributes>
+            {{yield data to="content"}}
+          </div>
         </div>
       </div>
-    </div>
-  </EmberWormhole>
-{{/if}}
+    </EmberWormhole>
+  </when.just>
+</CaseOf>

@@ -1,4 +1,4 @@
-wager_input_placeholder: "Enter Wager Amount"
+wager_input_placeholder: "Enter Your {kind} Wager Amount"
 application:
   header:
     home: "Home"
@@ -28,9 +28,11 @@ table_view:
   rolling: "Rolling..."
   bets:
     come: "Come"
+    pass: "Pass"
     pass_line: "Pass"
     pass_odds: "Odds"
     come_odds: "Come Odds"
+    hardway: "Hardway"
     field: "Field"
 place_dropdown:
   label: "Place Bets"

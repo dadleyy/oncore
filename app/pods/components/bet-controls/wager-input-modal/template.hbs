@@ -1,11 +1,11 @@
 <Modal @key={{this.key}}>
   <:overlay as |overlay|><overlay.overlay /></:overlay>
 
-  <:content>
+  <:content as |config|>
     <label>
       <input
         type="text"
-        placeholder={{t "wager_input_placeholder"}}
+        placeholder={{t "wager_input_placeholder" kind=(t (concat "table_view.bets." (underscore config.kind)))}}
         value={{this.wager}}
         valid={{is-just this.valid}}
         {{on "input" this.input}}

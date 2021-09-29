@@ -55,7 +55,6 @@ class TableView extends Component<{ state: State.State }> {
         continue;
       }
 
-      debug('fetched new state');
       this.history = [State.makeBusy(next, this.state.busy), ...this.history].slice(0, 2);
       await promises.sleep(POLL_DELAY);
     }
@@ -83,10 +82,21 @@ class TableView extends Component<{ state: State.State }> {
 
   @action
   public async bet(attempt: BetAttempts.default): Promise<void> {
+    const { stickbot, state } = this;
+
     debug('attempting to make bet "%j"', attempt);
+
+    const submission = await attempt.caseOf({
+      Field: (amount) => stickbot.bet(state.table, 'field', amount),
+      Pass: (amount) => stickbot.bet(state.table, 'pass', amount),
+      PassOdds: (amount) => stickbot.bet(state.table, 'pass-odds', amount),
+      Come: (amount) => stickbot.bet(state.table, 'come', amount),
+    });
+
+    this.finishBet(submission);
   }
 
-  public finishBet(result: Stickbot.BetSubmissionResult): void {
+  private finishBet(result: Stickbot.BetSubmissionResult): void {
     const { state: current } = this;
 
     debug('applying pending bet "%j"', result);

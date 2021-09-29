@@ -112,7 +112,7 @@ class BetControls extends Component<Args> {
     const { modals } = this;
     debug('initiating bet "%s" (target %s)', kind, target);
 
-    const wager = maybeHelpers.collect(await modals.activate(KEY)).getOrElse(undefined);
+    const wager = maybeHelpers.collect(await modals.activate(KEY, { kind })).getOrElse(undefined);
 
     if (!wager) {
       return;

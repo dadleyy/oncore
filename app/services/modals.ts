@@ -11,9 +11,25 @@ export function modalKey<P, R>(key: string): ModalActivationKey<P, R> {
   return key as ModalActivationKey<P, R>;
 }
 
+type ModalQueueCursor = {
+  key: ModalActivationKey<unknown, unknown>;
+  parameters?: unknown;
+  resolve: (item: unknown) => void;
+};
+
 class Modals extends Service {
   @tracked
-  public queue: Array<{ key: string; resolve: (item: unknown) => void }> = [];
+  public queue: Array<ModalQueueCursor> = [];
+
+  public lock<P, R>(key: ModalActivationKey<P, R>): Seidr.Maybe<P> {
+    const [first] = this.queue;
+
+    if (first && first.key === key) {
+      return Seidr.Just(first.parameters as P);
+    }
+
+    return Seidr.Nothing();
+  }
 
   public get active(): Seidr.Maybe<string> {
     const [first] = this.queue;
@@ -37,6 +53,7 @@ class Modals extends Service {
     debug('opening modal "%s" - "%j"', key, parameters);
     const item = {
       key,
+      parameters,
       resolve: (_item: Seidr.Maybe<R>) => {
         return;
       },

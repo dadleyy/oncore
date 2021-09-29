@@ -24,13 +24,18 @@ class WagerInputModal extends Component {
 
   @action
   public submit(event: KeyboardEvent): void {
+    const { key, modals, valid: wager } = this;
     const { keyCode } = event;
+
+    if (keyCode === 27) {
+      modals.close(key, Seidr.Nothing());
+      return;
+    }
 
     if (keyCode !== 13) {
       return;
     }
 
-    const { key, modals, valid: wager } = this;
     this.wager = undefined;
     modals.close(key, Seidr.Just(wager));
   }

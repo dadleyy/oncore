@@ -141,7 +141,6 @@ export async function hydrate(stickbot: Stickbot.default, state: State): Promise
     .flatMap((inner) => inner.toMaybe())
     .flatMap((status) => (status.output ? Seidr.Nothing() : Seidr.Just({ id: status.id })));
 
-  debug('finished reloading (busy "%s")', state.busy);
   return start.map((next) => ({
     ...next,
     pendingBets,
@@ -156,7 +155,6 @@ export async function load(
   id: string,
   session: CurrentSession
 ): Promise<Seidr.Result<Error, State>> {
-  debug('loading state from server for "%s"', id);
   const result = await stickbot.tables();
   return result.flatMap((tables) => fromTables(id, tables, session));
 }
