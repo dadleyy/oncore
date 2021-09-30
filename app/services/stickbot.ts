@@ -30,9 +30,13 @@ export type Table = {
   rolls: Array<[number, number]>;
 };
 
+type BetFailed = {
+  BetFailed: string;
+};
+
 export type JobStatus = {
   id: string;
-  output?: string;
+  output?: 'BetProcessed' | BetFailed;
 };
 
 export type BetSubmissionResult = Seidr.Result<Error, BetSubmission>;

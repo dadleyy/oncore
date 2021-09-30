@@ -33,6 +33,11 @@ export type PendingJob = {
   id: string;
 };
 
+export type FailedJob = {
+  id: string;
+  reason: string;
+};
+
 export type State = {
   busy: boolean;
   rollHistory: Array<ParsedRoll>;
@@ -41,6 +46,7 @@ export type State = {
   session: CurrentSession;
   pendingBets: Array<PendingJob>;
   pendingRoll: Seidr.Maybe<PendingJob>;
+  failedBets: Array<FailedJob>;
   nonce: string;
 };
 
@@ -92,6 +98,7 @@ function parseTable(table: Stickbot.Table, session: CurrentSession): State {
     rollHistory,
     session,
     pendingBets: [],
+    failedBets: [],
     pendingRoll: Seidr.Nothing(),
     busy: false,
     nonce: uuid.generate(),
@@ -128,14 +135,37 @@ export function makeBusy(state: State, busy = true): State {
   return { ...state, busy };
 }
 
+function getFailure(status: Stickbot.JobStatus): Seidr.Maybe<FailedJob> {
+  return Seidr.Maybe.fromNullable(status.output).flatMap((output) =>
+    output === 'BetProcessed' ? Seidr.Nothing() : Seidr.Just({ id: status.id, reason: output.BetFailed })
+  );
+}
+
+function partitionJobs(
+  partitions: [Array<PendingJob>, Array<FailedJob>],
+  item: Stickbot.JobStatus
+): [Array<PendingJob>, Array<FailedJob>] {
+  const [pending, failed] = partitions;
+
+  debug('checking job status "%s"', item.output);
+
+  const failures = getFailure(item)
+    .map((message) => [message, ...failed])
+    .getOrElse(failed);
+
+  return [pending.concat(item.output ? [] : item), failures];
+}
+
 export async function hydrate(stickbot: Stickbot.default, state: State): Promise<Seidr.Result<Error, State>> {
   const { pendingBets: jobs, pendingRoll: roll } = state;
   const start = await load(stickbot, state.table.id, state.session);
   const fetches = await Promise.all(jobs.map((job) => stickbot.job(job.id)));
 
-  const pendingBets = maybeHelpers
+  const [pendingBets, failedBets] = maybeHelpers
     .flatten(fetches.map((result) => result.toMaybe()))
-    .filter((status) => !status.output);
+    .reduce(partitionJobs, [[], []]);
+
+  debug('found %s failed jobs', failedBets.length);
 
   const pendingRoll = (await maybeHelpers.asyncMap(roll, (job) => stickbot.job(job.id)))
     .flatMap((inner) => inner.toMaybe())
@@ -147,7 +177,17 @@ export async function hydrate(stickbot: Stickbot.default, state: State): Promise
     pendingRoll,
     busy: state.busy,
     nonce: state.nonce,
+    failedBets: [...state.failedBets, ...failedBets],
   }));
+}
+
+export function dismissBet(state: State, id: string): State {
+  const failedBets = state.failedBets.filter((failure) => failure.id !== id);
+  return {
+    ...state,
+    failedBets,
+    nonce: uuid.generate(),
+  };
 }
 
 export async function load(

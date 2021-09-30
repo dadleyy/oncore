@@ -1,0 +1,35 @@
+<table ...attributes>
+  <thead>
+    <tr>
+      <th>{{t "table_view.bet_kind"}}</th>
+      <th>{{t "table_view.wager"}}</th>
+      <th>{{t "table_view.wins_on"}}</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {{#each this.projectedBets key="@index" as |projection|}}
+      <tr>
+        <td>{{projection.bet.kind}}</td>
+        <td>{{projection.bet.amount}}</td>
+        <td>{{projection.bet.target}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+
+  {{#if this.empty}}
+    <tbody>
+      <tr>
+        <td colspan={{3}}>{{t "table_view.no_bets"}}</td>
+      </tr>
+    </tbody>
+  {{/if}}
+
+  <tbody>
+    {{#each @pendingBets key="id" as |pending|}}
+      <tr data-role="pending-bet" data-job-id={{pending.id}}>
+        <td colspan={{3}}>{{t "table_view.pending"}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

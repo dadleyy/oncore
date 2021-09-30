@@ -1,4 +1,6 @@
 wager_input_placeholder: "Enter Your {kind} Wager Amount"
+roll: "Roll"
+rolling: "Rolling..."
 application:
   header:
     home: "Home"
@@ -13,6 +15,7 @@ home:
 login:
   login: "Log In"
 table_view:
+  failed_bet: "Failed Bet"
   roller: "Roller"
   roll_total: "Roll Total"
   roll_history: "Roll History"

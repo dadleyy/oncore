@@ -5,7 +5,7 @@
   {{did-insert this.startPolling}}
   {{on-key "r" this.roll}}
 >
-  <div data-role="table-history" class="w-1/6 mr-4">
+  <div data-role="table-history" class="flex-1 mr-4">
     <table class="table-fixed w-full">
       <thead>
         <tr>
@@ -13,6 +13,12 @@
           <td>{{t "table_view.roll_total"}}</td>
         </tr>
       </thead>
+      <tbody>
+        <tr>
+          <td colspan={{2}}>{{t "table_view.button"}}</td>
+          <td>{{this.state.table.button}}</td>
+        </tr>
+      </tbody>
       <tbody>
         {{#each this.state.rollHistory key="@index" as |roll index|}}
           <tr class={{if (eq index 0) "bg-gray-100" "text-gray-400"}}>
@@ -32,67 +38,50 @@
   <CaseOf @kind={{this.state.playerPosition}} as |when|>
     <when.just as |seat|>
       <div data-role="player">
-        <div data-role="player-position" class="w-full flex items-start">
-          <table>
+        <div data-role="player-position" class="w-full">
+          <table class="w-full mb-4">
             <tbody>
               <tr>
                 <td>{{t "table_view.balance"}}</td>
-                <td>{{seat.balance}}</td>
+                <td colspan={{2}}>{{seat.balance}}</td>
               </tr>
-              <tr>
-                <td>{{t "table_view.button"}}</td>
-                <td>{{this.state.table.button}}</td>
-              </tr>
-              <tr>
-                <td>{{t "table_view.version"}}</td>
-                <td><code>{{this.state.table.nonce}}</code></td>
-              </tr>
-              <tr>
-                <td>{{t "table_view.roller"}}</td>
-                <td><code>{{this.state.table.roller}}</code></td>
-              </tr>
-            </tbody>
-          </table>
 
-          <table class="ml-4">
-            <thead>
-              <tr>
-                <th>{{t "table_view.bet_kind"}}</th>
-                <th>{{t "table_view.wager"}}</th>
-                <th>{{t "table_view.wins_on"}}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each seat.bets key="@index" as |bet|}}
+              {{#each this.state.failedBets as |failure|}}
                 <tr>
-                  <td>{{bet.kind}}</td>
-                  <td>{{bet.amount}}</td>
-                  <td>{{bet.target}}</td>
-                </tr>
-              {{else}}
-                <tr>
-                  <td colspan={{3}}>{{t "table_view.no_bets"}}</td>
-                </tr>
-              {{/each}}
-            </tbody>
-
-            <tbody>
-              {{#each this.state.pendingBets key="id" as |pending|}}
-                <tr data-role="pending-bet" data-job-id={{pending.id}}>
-                  <td colspan={{3}}>{{t "table_view.pending"}}</td>
+                  <td>{{t "table_view.failed_bet"}}</td>
+                  <td>{{failure.reason}}</td>
+                  <td class="text-center">
+                    <button type="button" class="ml-auto warning" {{on "click" (fn this.dismissBet failure.id)}}>
+                      <i class="fa-times fas" />
+                    </button>
+                  </td>
                 </tr>
               {{/each}}
             </tbody>
           </table>
+
+          <BetList
+            @bets={{seat.bets}}
+            @pendingBets={{this.state.pendingBets}}
+            class="ml-0 w-full"
+          />
         </div>
 
-        <BetControls
-          @button={{this.state.table.button}}
-          @busy={{this.state.busy}}
-          @bets={{seat.bets}}
-          @attempt={{this.bet}}
-          class="mt-5 flex items-center flex-wrap space-x-4"
-        />
+        <div data-role="controls-and-actions" class="flex items-center mt-5">
+          <div class="flex-1 mr-10">
+            <button disabled={{or this.state.busy (is-just this.state.pendingRoll)}} type="button">
+              {{if (is-just this.state.pendingRoll) (t "rolling") (t "roll")}}
+            </button>
+          </div>
+
+          <BetControls
+            @button={{this.state.table.button}}
+            @busy={{or (is-just this.state.pendingRoll) this.state.busy}}
+            @bets={{seat.bets}}
+            @attempt={{this.bet}}
+            class="flex items-center flex-wrap space-x-4 flex-8"
+          />
+        </div>
       </div>
     </when.just>
   </CaseOf>

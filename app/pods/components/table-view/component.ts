@@ -81,6 +81,14 @@ class TableView extends Component<{ state: State.State }> {
   }
 
   @action
+  public dismissBet(id: string): void {
+    const { state } = this;
+    debug('dismissing bet "%s"', id);
+    const next = State.dismissBet(state, id);
+    this.history = [next, ...this.history];
+  }
+
+  @action
   public async bet(attempt: BetAttempts.default): Promise<void> {
     const { stickbot, state } = this;
 
