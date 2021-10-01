@@ -11,7 +11,7 @@ type DropdownAPI = {
   actions: {
     open: () => void;
   };
-}
+};
 
 type Args = {
   disabled: boolean;
@@ -37,7 +37,7 @@ class PlaceDropdown extends Component<Args> {
       dropdown.actions.open();
     }
 
-    this.timeout = later(() => this.keylist = [], 500);
+    this.timeout = later(() => (this.keylist = []), 500);
   }
 }
 
