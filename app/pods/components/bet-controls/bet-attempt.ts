@@ -5,6 +5,9 @@ export type BetAttemptVariants = {
   PassOdds: [number];
   Field: [number];
   Come: [number];
+  ComeOdds: [number, number];
+  Hardway: [number, number];
+  Place: [number, number];
 };
 
 class BetAttempt extends SumType<BetAttemptVariants> {}
@@ -23,6 +26,18 @@ export function PassOdds(amount: number): BetAttempt {
 
 export function Come(amount: number): BetAttempt {
   return new BetAttempt('Come', amount);
+}
+
+export function Hardway(target: number, amount: number): BetAttempt {
+  return new BetAttempt('Hardway', target, amount);
+}
+
+export function Place(target: number, amount: number): BetAttempt {
+  return new BetAttempt('Place', target, amount);
+}
+
+export function ComeOdds(target: number, amount: number): BetAttempt {
+  return new BetAttempt('ComeOdds', target, amount);
 }
 
 export default BetAttempt;

@@ -99,6 +99,9 @@ class TableView extends Component<{ state: State.State }> {
       Pass: (amount) => stickbot.bet(state.table, 'pass', amount),
       PassOdds: (amount) => stickbot.bet(state.table, 'pass-odds', amount),
       Come: (amount) => stickbot.bet(state.table, 'come', amount),
+      ComeOdds: (target, amount) => stickbot.odds(state.table, target, amount),
+      Hardway: (target, amount) => stickbot.hardway(state.table, target, amount),
+      Place: (target, amount) => stickbot.place(state.table, target, amount),
     });
 
     this.finishBet(submission);

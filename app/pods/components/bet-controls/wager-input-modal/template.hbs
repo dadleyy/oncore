@@ -5,6 +5,7 @@
     <label>
       <input
         type="text"
+        class="w-80"
         placeholder={{t "wager_input_placeholder" kind=(t (concat "table_view.bets." (underscore config.kind)))}}
         value={{this.wager}}
         valid={{is-just this.valid}}

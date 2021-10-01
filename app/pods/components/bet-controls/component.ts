@@ -108,7 +108,7 @@ class BetControls extends Component<Args> {
   }
 
   @action
-  public async bet(kind: string, target?: number): Promise<void> {
+  public async bet(kind: string, target?: number): Promise<void | null> {
     const { modals } = this;
     debug('initiating bet "%s" (target %s)', kind, target);
 
@@ -127,6 +127,12 @@ class BetControls extends Component<Args> {
         return this.args.attempt(BetAttempts.PassOdds(wager));
       case 'come':
         return this.args.attempt(BetAttempts.Come(wager));
+      case 'come-odds':
+        return target ? this.args.attempt(BetAttempts.ComeOdds(target, wager)) : null;
+      case 'hardway':
+        return target ? this.args.attempt(BetAttempts.Hardway(target, wager)) : null;
+      case 'place':
+        return target ? this.args.attempt(BetAttempts.Place(target, wager)) : null;
       case 'field':
         return this.args.attempt(BetAttempts.Field(wager));
         break;

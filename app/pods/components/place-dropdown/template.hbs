@@ -1,6 +1,6 @@
 <div data-role="place-dropdown">
   <BasicDropdown @disabled={{@disabled}} as |dropdown|>
-    <dropdown.Trigger class="button flex-1">{{t "place_dropdown.label"}}</dropdown.Trigger>
+    <dropdown.Trigger {{on-key "_all" (fn this.watchkey dropdown)}} class="button flex-1">{{t "place_dropdown.label"}}</dropdown.Trigger>
     <dropdown.Content class="dropdown">
       <div
         data-role="place-option"

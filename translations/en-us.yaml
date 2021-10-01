@@ -35,6 +35,7 @@ table_view:
     pass_line: "Pass"
     pass_odds: "Odds"
     come_odds: "Come Odds"
+    place: "Place"
     hardway: "Hardway"
     field: "Field"
 place_dropdown:
