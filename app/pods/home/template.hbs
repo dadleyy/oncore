@@ -3,6 +3,9 @@
     <div data-role="error">{{t "errors.home.failed_load"}}</div>
   </case.err>
   <case.ok as |model|>
+    <div class="mb-2">
+      <button type="button" {{on "click" this.createTable}}>{{t "home.create_table"}}</button>
+    </div>
     <table class="table-fixed w-full">
       <thead>
         <tr>
@@ -13,7 +16,7 @@
       <tbody>
         {{#each model.rows key="table.id" as |row|}}
           <tr data-table-id={{row.table.id}} data-table-version={{row.table.nonce}}>
-            <td>{{row.table.id}}</td>
+            <td>{{row.table.name}}</td>
             <td>
               {{#if row.joined}}
                 <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>

@@ -5,6 +5,7 @@ application:
   header:
     home: "Home"
 home:
+  create_table: "Create Table"
   actions:
     view_table: "View"
     leave_table: "Leave"

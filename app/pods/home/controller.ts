@@ -53,6 +53,22 @@ class HomeController extends Controller {
       },
     });
   }
+
+  @action
+  public async createTable(): Promise<void> {
+    const { stickbot, routerUtility: router } = this;
+    const tableId = (await stickbot.createTable()).getOrElse(undefined);
+
+    if (!tableId) {
+      debug('failed creating new table');
+      alert('Unable to create new table');
+      return;
+    }
+
+    debug('created new table "%j"', tableId);
+    router.transitionTo('tables.single-table', tableId);
+    return;
+  }
 }
 
 export default HomeController;

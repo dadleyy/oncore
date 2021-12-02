@@ -1,5 +1,11 @@
 <CaseOf @kind={{this.user}} as |when|>
   <when.just as |user|>
-    <p>{{user.nickname}} | {{user.balance}}</p>
+    <div class="flex items-center">
+      <p class="block">{{user.nickname}} | {{user.balance}}</p>
+
+      {{#if this.isAdmin}}
+        <button class="ml-2" type="button" {{on "click" this.setBalance}}><i class="fa fa-dollar-sign" /></button>
+      {{/if}}
+    </div>
   </when.just>
 </CaseOf>
