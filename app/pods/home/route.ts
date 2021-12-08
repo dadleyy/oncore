@@ -33,6 +33,7 @@ class HomeRoute extends Route {
     const { stickbot, session } = this;
     debug('loading tables');
     const tables = await stickbot.tables();
+    debug('finished loading tables %o', tables);
 
     const maybeModel = helpers
       .zip(tables.toMaybe(), session.currentSession)
