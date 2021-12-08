@@ -1,4 +1,4 @@
-name: Auto Tagger
+name: auto-tagger
 on:
   push:
     branches:
