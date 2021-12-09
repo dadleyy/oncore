@@ -6,9 +6,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: "${{ secrets.AUTOTAGGER_PAT }}"
     steps:
     - uses: actions/checkout@v2
     - uses: Klemensas/action-autotag@stable
       with:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_TOKEN: "${{ secrets.AUTOTAGGER_PAT }}"
         tag_prefix: "v"
