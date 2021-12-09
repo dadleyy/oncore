@@ -1,27 +1,21 @@
-# oncore
+## oncore
 
-## Prerequisites
+The frontend for [`twowaiyo`](https://github.com/dadleyy/twowaiyo).
 
-You will need the following things properly installed on your computer.
+---
 
-* [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with npm)
-* [Ember CLI](https://ember-cli.com/)
-* [Google Chrome](https://google.com/chrome/)
+### Prerequisites + Installation
 
-## Installation
+This is an [emberjs](https://emberjs.com/) single-page, client-side application.
 
-* `git clone <repository-url>` this repository
+* `git clone git@github.com:dadleyy/oncore.git`
 * `cd oncore`
 * `npm install`
 
-## Running / Development
+### Running / Development
 
-* `npm start`
-
-### Code Generators
-
-Make use of the many generators for code, try `ember help generate` for more details
+* `npm run start:proxy`
+* `npm run build`
 
 ### Running Tests
 
@@ -29,10 +23,6 @@ Make use of the many generators for code, try `ember help generate` for more det
 
 ### Linting
 
-* `npm run lint`
-* `npm run lint:fix`
-
-### Building
-
-* `npm build` (development)
-* `npm build -- --environment production` (production)
+* `npm run lint:js`
+* `npm run lint:deps`
+* `npm run lint:hbs`
