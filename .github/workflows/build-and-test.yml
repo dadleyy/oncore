@@ -10,6 +10,7 @@ jobs:
     env:
       ONCORE_ROOT_URL: "${{  secrets.ONCORE_ROOT_URL }}"
       ONCORE_TWOWAIYO_AUTH_START_URL: "${{ secrets.ONCORE_TWOWAIYO_AUTH_START_URL }}"
+      ONCORE_TWOWAIYO_API_URL: "${{ secrets.ONCORE_TWOWAIYO_API_URL }}"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2

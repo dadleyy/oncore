@@ -59,26 +59,26 @@ async function post<T>(url: string, body: string): Promise<Seidr.Result<Error, T
 class Stickbot extends Service {
   public async leave(id: string): Promise<Seidr.Result<Error, []>> {
     const body = JSON.stringify({ id });
-    const result = await post(`${config.apiUrl}/leave-table`, body);
+    const result = await post(`${config.apiURL}/leave-table`, body);
     return result.map(() => []);
   }
 
   public async join(id: string): Promise<Seidr.Result<Error, []>> {
     const body = JSON.stringify({ id });
-    const result = await post(`${config.apiUrl}/join-table`, body);
+    const result = await post(`${config.apiURL}/join-table`, body);
     debug('joining table "%s"', id);
     return result.map(() => []);
   }
 
   public async job(id: string): Promise<Seidr.Result<Error, JobStatus>> {
-    const result = await promises.awaitResult(fetchApi(`${config.apiUrl}/job?id=${id}`, {}));
+    const result = await promises.awaitResult(fetchApi(`${config.apiURL}/job?id=${id}`, {}));
     return promises.asyncMap(result, (res) => res.json());
   }
 
   public async roll(table: Pick<Table, 'id' | 'nonce'>): Promise<Seidr.Result<Error, BetSubmission>> {
     debug('attempting to start roll on table "%s"', table.id);
     const body = JSON.stringify({ table: table.id, nonce: table.nonce });
-    return post(`${config.apiUrl}/rolls`, body);
+    return post(`${config.apiURL}/rolls`, body);
   }
 
   public async hardway(
@@ -93,7 +93,7 @@ class Stickbot extends Service {
       table: table.id,
       nonce: table.nonce,
     });
-    return await post<BetSubmission>(`${config.apiUrl}/bets`, body);
+    return await post<BetSubmission>(`${config.apiURL}/bets`, body);
   }
 
   public async place(table: Pick<Table, 'id' | 'nonce'>, target: number, amount: number): Promise<BetSubmissionResult> {
@@ -104,7 +104,7 @@ class Stickbot extends Service {
       table: table.id,
       nonce: table.nonce,
     });
-    return await post<BetSubmission>(`${config.apiUrl}/bets`, body);
+    return await post<BetSubmission>(`${config.apiURL}/bets`, body);
   }
 
   public async odds(table: Pick<Table, 'id' | 'nonce'>, target: number, amount: number): Promise<BetSubmissionResult> {
@@ -115,7 +115,7 @@ class Stickbot extends Service {
       table: table.id,
       nonce: table.nonce,
     });
-    const submission = await post<BetSubmission>(`${config.apiUrl}/bets`, body);
+    const submission = await post<BetSubmission>(`${config.apiURL}/bets`, body);
     return submission;
   }
 
@@ -127,19 +127,19 @@ class Stickbot extends Service {
       nonce: table.nonce,
     });
     debug('placing "%s" for "%s"', kind, amount);
-    const submission = await post<BetSubmission>(`${config.apiUrl}/bets`, body);
+    const submission = await post<BetSubmission>(`${config.apiURL}/bets`, body);
     debug('bet submission %j', submission);
     return submission;
   }
 
   public async createTable(): Promise<Seidr.Result<Error, string>> {
-    const result = await post<TableCreationResponse>(`${config.apiUrl}/tables`, '');
+    const result = await post<TableCreationResponse>(`${config.apiURL}/tables`, '');
     debug('table creation completed with "%j"', result);
     return result.map((res) => res.id);
   }
 
   public async tables(): Promise<Seidr.Result<Error, Array<Table>>> {
-    const result = await promises.awaitResult(fetchApi(`${config.apiUrl}/tables`));
+    const result = await promises.awaitResult(fetchApi(`${config.apiURL}/tables`));
     const tables = await promises.asyncMap(result, (response) => response.json());
     return tables;
   }

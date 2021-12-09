@@ -30,7 +30,7 @@ class UserMenu extends Component {
   @action
   public async setBalance(): Promise<void> {
     debug('admin setting user balance');
-    await fetchApi(`${config.apiUrl}/admin/set-balance?amount=5000`, { method: 'GET' });
+    await fetchApi(`${config.apiURL}/admin/set-balance?amount=5000`, { method: 'GET' });
   }
 }
 
