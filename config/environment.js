@@ -22,6 +22,7 @@ module.exports = function (environment) {
 
   if (environment === 'production') {
     ENV.rootURL = process.env['ONCORE_ROOT_URL'];
+    ENV.apiUrl = process.env['ONCORE_TWOWAIYO_API_URL'];
     ENV.externalRoutes.auth.start = process.env['ONCORE_TWOWAIYO_AUTH_START_URL'];
   }
 
