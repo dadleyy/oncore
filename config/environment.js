@@ -21,7 +21,8 @@ module.exports = function (environment) {
   };
 
   if (environment === 'production') {
-    ENV.rootURL = '/twowaiyo/';
+    ENV.rootURL = process.env['ONCORE_ROOT_URL'];
+    ENV.externalRoutes.auth.start = process.env['ONCORE_TWOWAIYO_AUTH_START_URL'];
   }
 
   if (environment === 'test') {
