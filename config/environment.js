@@ -20,6 +20,10 @@ module.exports = function (environment) {
     APP: {},
   };
 
+  if (environment === 'production') {
+    ENV.rootURL = '/twowaiyo/';
+  }
+
   if (environment === 'test') {
     // Testem prefers this...
     ENV.locationType = 'none';
