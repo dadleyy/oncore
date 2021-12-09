@@ -3,7 +3,7 @@ export default config;
 declare const config: {
   environment: string;
   modulePrefix: string;
-  apiUrl: string;
+  apiURL: string;
   externalRoutes: {
     auth: {
       start: string;

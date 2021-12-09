@@ -7,7 +7,7 @@ module.exports = function (environment) {
     environment,
     rootURL: '/',
     locationType: 'auto',
-    apiUrl: '',
+    apiURL: '',
     externalRoutes: {
       auth: {
         start: 'http://0.0.0.0:8611/auth/start',
@@ -22,7 +22,7 @@ module.exports = function (environment) {
 
   if (environment === 'production') {
     ENV.rootURL = process.env['ONCORE_ROOT_URL'];
-    ENV.apiUrl = process.env['ONCORE_TWOWAIYO_API_URL'];
+    ENV.apiURL = process.env['ONCORE_TWOWAIYO_API_URL'];
     ENV.externalRoutes.auth.start = process.env['ONCORE_TWOWAIYO_AUTH_START_URL'];
   }
 

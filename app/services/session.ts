@@ -25,7 +25,7 @@ class Session extends Service {
   }
 
   public async identify(): Promise<Seidr.Maybe<CurrentSession>> {
-    const res = await promises.awaitResult(fetch(`${config.apiUrl}/auth/identify`));
+    const res = await promises.awaitResult(fetch(`${config.apiURL}/auth/identify`));
     const response = res.getOrElse(undefined);
 
     if (!response || !response.status) {
