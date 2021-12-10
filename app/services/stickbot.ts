@@ -138,6 +138,12 @@ class Stickbot extends Service {
     return result.map((res) => res.id);
   }
 
+  public async table(id: string): Promise<Seidr.Result<Error, Table>> {
+    const result = await promises.awaitResult(fetchApi(`${config.apiURL}/table?id=${id}`));
+    const tables = await promises.asyncMap(result, (response) => response.json());
+    return tables;
+  }
+
   public async tables(): Promise<Seidr.Result<Error, Array<Table>>> {
     const result = await promises.awaitResult(fetchApi(`${config.apiURL}/tables`));
     const tables = await promises.asyncMap(result, (response) => response.json());

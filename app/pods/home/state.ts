@@ -17,7 +17,7 @@ export type Model = {
 export function toModel(session: CurrentSession, tables: Array<Table>): Model {
   debug('building rows from session "%s"', session.id);
   const rows = tables.map((table) => {
-    const joined = table.seats[session.id] !== undefined;
+    const joined = table.seats && table.seats[session.id] !== undefined;
     return { table, joined };
   });
   return { rows, tables };

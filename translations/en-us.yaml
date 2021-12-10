@@ -56,3 +56,8 @@ bets:
     six: "Hard Six"
     eight: "Hard Eight"
     ten: "Hard Ten"
+errors:
+  home:
+    failed_load: "Unable to load tables"
+  single_table:
+    failed_load: "Unable to find table"
