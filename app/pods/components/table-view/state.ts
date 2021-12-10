@@ -186,5 +186,5 @@ export async function load(
   session: CurrentSession
 ): Promise<Seidr.Result<Error, State>> {
   const result = await stickbot.table(id);
-  return result.map(table => parseTable(table, session));
+  return result.map((table) => parseTable(table, session));
 }
