@@ -105,16 +105,6 @@ function parseTable(table: Stickbot.Table, session: CurrentSession): State {
   };
 }
 
-export function fromTables(
-  id: string,
-  tables: Array<Stickbot.Table>,
-  session: CurrentSession
-): Seidr.Result<Error, State> {
-  const maybeTable = Seidr.Maybe.fromNullable(tables.find((t) => t.id === id));
-  const model = maybeTable.map((table) => parseTable(table, session));
-  return maybeHelpers.orErr(new Error('not-found'), model);
-}
-
 export function setPendingRoll(state: State, job: PendingJob): State {
   return {
     ...state,
@@ -195,6 +185,6 @@ export async function load(
   id: string,
   session: CurrentSession
 ): Promise<Seidr.Result<Error, State>> {
-  const result = await stickbot.tables();
-  return result.flatMap((tables) => fromTables(id, tables, session));
+  const result = await stickbot.table(id);
+  return result.map(table => parseTable(table, session));
 }
