@@ -7,6 +7,7 @@ declare const config: {
   externalRoutes: {
     auth: {
       start: string;
+      logout: string;
     };
   };
   podModulePrefix: string;

@@ -1,7 +1,8 @@
 import * as Seidr from 'seidr';
 import { dasherize } from '@ember/string';
 import debugLogger from 'ember-debug-logger';
-import * as Stickbot from 'oncore/services/stickbot';
+import * as Stickbot from 'oncore/services/stickbot-tables';
+import * as Jobs from 'oncore/services/stickbot-jobs';
 import { CurrentSession } from 'oncore/services/session';
 import * as maybeHelpers from 'oncore/utility/maybe-helpers';
 import * as uuid from 'oncore/utility/uuid';
@@ -16,6 +17,8 @@ export type ParsedBet = {
 };
 
 export type Seat = {
+  id: string;
+  nickname: string;
   state: Stickbot.Seat;
   balance: number;
   hasPass: boolean;
@@ -40,8 +43,10 @@ export type FailedJob = {
 
 export type State = {
   busy: boolean;
+  selectedSeat: Seidr.Maybe<Seat>;
+  seats: Array<Seat>;
   rollHistory: Array<ParsedRoll>;
-  table: Stickbot.Table;
+  table: Stickbot.TableDetails;
   playerPosition: Seidr.Maybe<Seat>;
   session: CurrentSession;
   pendingBets: Array<PendingJob>;
@@ -73,9 +78,11 @@ function parseSeat(input: Stickbot.Seat): Seat {
   const bets = input.bets.map(parseBet);
 
   return {
+    id: '',
     bets,
     state: input,
     balance: input.balance,
+    nickname: input.nickname,
     comeOddsOptions: bets
       .filter((b) => b.kind === 'come')
       .reduce((acc, b) => (b.target ? [...acc, b.target] : acc), []),
@@ -83,7 +90,7 @@ function parseSeat(input: Stickbot.Seat): Seat {
   };
 }
 
-function parseTable(table: Stickbot.Table, session: CurrentSession): State {
+function parse(table: Stickbot.TableDetails, session: CurrentSession): State {
   const player = table.seats[session.id];
   const playerPosition = Seidr.Maybe.fromNullable(player).map(parseSeat);
   const rollHistory = table.rolls.map(([left, right]) => ({
@@ -92,11 +99,16 @@ function parseTable(table: Stickbot.Table, session: CurrentSession): State {
     total: left + right,
   }));
 
+  const seats = (Object.entries(table.seats || {}) || []).map(([id, seat]) => ({ ...parseSeat(seat), id }));
+  const selectedSeat = playerPosition.map((seat) => ({ ...seat, id: session.id }));
+
   return {
     table,
     playerPosition,
     rollHistory,
     session,
+    seats,
+    selectedSeat,
     pendingBets: [],
     failedBets: [],
     pendingRoll: Seidr.Nothing(),
@@ -125,7 +137,7 @@ export function makeBusy(state: State, busy = true): State {
   return { ...state, busy };
 }
 
-function getFailure(status: Stickbot.JobStatus): Seidr.Maybe<FailedJob> {
+function getFailure(status: Jobs.JobStatus): Seidr.Maybe<FailedJob> {
   return Seidr.Maybe.fromNullable(status.output).flatMap((output) =>
     output === 'BetProcessed' ? Seidr.Nothing() : Seidr.Just({ id: status.id, reason: output.BetFailed })
   );
@@ -133,7 +145,7 @@ function getFailure(status: Stickbot.JobStatus): Seidr.Maybe<FailedJob> {
 
 function partitionJobs(
   partitions: [Array<PendingJob>, Array<FailedJob>],
-  item: Stickbot.JobStatus
+  item: Jobs.JobStatus
 ): [Array<PendingJob>, Array<FailedJob>] {
   const [pending, failed] = partitions;
 
@@ -146,10 +158,14 @@ function partitionJobs(
   return [pending.concat(item.output ? [] : item), failures];
 }
 
-export async function hydrate(stickbot: Stickbot.default, state: State): Promise<Seidr.Result<Error, State>> {
-  const { pendingBets: jobs, pendingRoll: roll } = state;
+export async function hydrate(
+  stickbot: Stickbot.default,
+  jobs: Jobs.default,
+  state: State
+): Promise<Seidr.Result<Error, State>> {
+  const { pendingBets: betQueue, pendingRoll: roll } = state;
   const start = await load(stickbot, state.table.id, state.session);
-  const fetches = await Promise.all(jobs.map((job) => stickbot.job(job.id)));
+  const fetches = await Promise.all(betQueue.map((job) => jobs.find(job.id)));
 
   const [pendingBets, failedBets] = maybeHelpers
     .flatten(fetches.map((result) => result.toMaybe()))
@@ -157,18 +173,25 @@ export async function hydrate(stickbot: Stickbot.default, state: State): Promise
 
   debug('found %s failed jobs', failedBets.length);
 
-  const pendingRoll = (await maybeHelpers.asyncMap(roll, (job) => stickbot.job(job.id)))
+  const pendingRoll = (await maybeHelpers.asyncMap(roll, (job) => jobs.find(job.id)))
     .flatMap((inner) => inner.toMaybe())
     .flatMap((status) => (status.output ? Seidr.Nothing() : Seidr.Just({ id: status.id })));
 
-  return start.map((next) => ({
-    ...next,
-    pendingBets,
-    pendingRoll,
-    busy: state.busy,
-    nonce: state.nonce,
-    failedBets: [...state.failedBets, ...failedBets],
-  }));
+  return start.map((next) => {
+    const selectedSeat = state.selectedSeat
+      .flatMap(({ id }) => Seidr.Maybe.fromNullable(next.seats.find((s) => s.id === id)))
+      .orElse(() => next.selectedSeat);
+
+    return {
+      ...next,
+      pendingBets,
+      pendingRoll,
+      selectedSeat,
+      busy: state.busy,
+      nonce: state.nonce,
+      failedBets: [...state.failedBets, ...failedBets],
+    };
+  });
 }
 
 export function dismissBet(state: State, id: string): State {
@@ -185,6 +208,19 @@ export async function load(
   id: string,
   session: CurrentSession
 ): Promise<Seidr.Result<Error, State>> {
-  const result = await stickbot.table(id);
-  return result.map((table) => parseTable(table, session));
+  const result = await stickbot.find(id);
+  return result.map((table) => parse(table, session));
+}
+
+export function isRoller(state: State): boolean {
+  return state.table.roller === state.session.id;
+}
+
+export function setActiveSeat(state: State, id: string): State {
+  const selectedSeat = Seidr.Maybe.fromNullable(state.seats.find((s) => s.id === id));
+  return {
+    ...state,
+    selectedSeat,
+    nonce: uuid.generate(),
+  };
 }

@@ -1,25 +1,44 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
-import * as Stickbot from 'oncore/services/stickbot';
+import * as Stick from 'oncore/services/stickbot';
+import * as Stickbot from 'oncore/services/stickbot-tables';
+import * as Jobs from 'oncore/services/stickbot-jobs';
 import { action } from '@ember/object';
 import debugLogger from 'ember-debug-logger';
 import * as State from 'oncore/pods/components/table-view/state';
 import * as promises from 'oncore/utility/promise-helpers';
 import * as BetAttempts from 'oncore/pods/components/bet-controls/bet-attempt';
+import { compare } from '@ember/utils';
 
 const debug = debugLogger('component:table-view');
 
-const POLL_DELAY = 3000;
+const POLL_DELAY = 1500;
 
 class TableView extends Component<{ state: State.State }> {
   public tagName = '';
 
   @service
-  public declare stickbot: Stickbot.default;
+  public declare stickbot: Stick.default;
+
+  @service
+  public declare stickbotTables: Stickbot.default;
+
+  @service
+  public declare stickbotJobs: Jobs.default;
 
   @tracked
   public history: Array<State.State> = [];
+
+  public get isRoller(): boolean {
+    const { state } = this;
+    return State.isRoller(state);
+  }
+
+  public get selectedSeatId(): string {
+    const { state } = this;
+    return state.selectedSeat.map((seat) => seat.id).getOrElse('');
+  }
 
   public get state(): State.State {
     const { history } = this;
@@ -27,14 +46,27 @@ class TableView extends Component<{ state: State.State }> {
     return first;
   }
 
+  public get visibleSeats(): Array<State.Seat> {
+    const { state } = this;
+    return state.seats.slice(0, 4).sort((a, b) => compare(a.id, b.id));
+  }
+
+  @action
+  public selectSeat(id: string): void {
+    const { state } = this;
+    debug('setting active seat "%s"', id, state);
+    const next = State.setActiveSeat(state, id);
+    this.history = [next, ...this.history].slice(0, 4);
+  }
+
   @action
   public async startPolling(): Promise<void> {
-    const { stickbot, state } = this;
+    const { stickbotTables: stickbot, stickbotJobs: jobs, state } = this;
     debug('entering poll loop for table "%s"', state.table.id);
 
     while (!this.isDestroyed) {
       const { state: current } = this;
-      const result = await State.hydrate(stickbot, current);
+      const result = await State.hydrate(stickbot, jobs, current);
 
       if (this.isDestroyed) {
         debug('breaking poll loop early - component torn down');
@@ -64,7 +96,13 @@ class TableView extends Component<{ state: State.State }> {
 
   @action
   public async roll(): Promise<void> {
-    const { state, stickbot } = this;
+    const { state, isRoller, stickbot } = this;
+
+    if (!isRoller) {
+      debug('current user not roller, aborting');
+      return;
+    }
+
     const start = State.makeBusy(state);
     this.history = [start, ...this.history];
     const result = await stickbot.roll(state.table);
@@ -107,7 +145,7 @@ class TableView extends Component<{ state: State.State }> {
     this.finishBet(submission);
   }
 
-  private finishBet(result: Stickbot.BetSubmissionResult): void {
+  private finishBet(result: Stick.BetSubmissionResult): void {
     const { state: current } = this;
 
     debug('applying pending bet "%j"', result);

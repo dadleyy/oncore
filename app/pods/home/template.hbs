@@ -3,31 +3,47 @@
     <div data-role="error">{{t "errors.home.failed_load"}}</div>
   </case.err>
   <case.ok as |model|>
-    <div class="mb-2">
-      <button data-role="create-table" type="button" {{on "click" this.createTable}}>{{t "home.create_table"}}</button>
+    <div class="lg:flex lg:flex-start block">
+      <div class="lg:flex-2 lg:pr-4 mb-4 lg:mb-0" data-role="all-tables">
+        <div class="mb-2 flex items-center">
+          <p>{{t "home.all_tables"}}</p>
+          <div class="ml-auto">
+            <button data-role="create-table" type="button" {{on "click" this.createTable}}>
+              {{t "home.create_table"}}
+            </button>
+          </div>
+        </div>
+        <table class="table-auto w-full">
+          <thead>
+            <tr>
+              <th>{{t "home.columns.table_id"}}</th>
+              <th>{{t "home.columns.population"}}</th>
+              <th>{{t "home.columns.actions"}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each model.rows key="table.id" as |row|}}
+              <tr data-table-id={{row.table.id}} data-table-version={{row.table.nonce}}>
+                <td class="w-8/12">{{row.table.name}}</td>
+                <td>{{row.population}}</td>
+                <td>
+                  {{#if row.joined}}
+                    <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>
+                    <a href="#" {{on "click" (fn this.leaveTable row.table.id)}}>{{t "home.actions.leave_table"}}</a>
+                  {{else}}
+                    <a href="#" {{on "click" (fn this.joinTable row.table.id)}}>{{t "home.actions.join_table"}}</a>
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      <div class="lg:flex-1 lg:pl-4" data-role="my-tables">
+        <div class="mb-2 flex items-center">
+          <p>{{t "placeholder"}}</p>
+        </div>
+      </div>
     </div>
-    <table class="table-fixed w-full">
-      <thead>
-        <tr>
-          <th>{{t "home.columns.table_id"}}</th>
-          <th>{{t "home.columns.actions"}}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each model.rows key="table.id" as |row|}}
-          <tr data-table-id={{row.table.id}} data-table-version={{row.table.nonce}}>
-            <td>{{row.table.name}}</td>
-            <td>
-              {{#if row.joined}}
-                <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>
-                <a href="#" {{on "click" (fn this.leaveTable row.table)}}>{{t "home.actions.leave_table"}}</a>
-              {{else}}
-                <a href="#" {{on "click" (fn this.joinTable row.table)}}>{{t "home.actions.join_table"}}</a>
-              {{/if}}
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
   </case.ok>
 </CaseOf>

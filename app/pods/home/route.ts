@@ -2,7 +2,7 @@ import Route from '@ember/routing/route';
 import debugLogger from 'ember-debug-logger';
 import type RouterService from '@ember/routing/router-service';
 import type SessionService from 'oncore/services/session';
-import type Stickbot from 'oncore/services/stickbot';
+import type TableIndex from 'oncore/services/stickbot-tables';
 import { inject as service } from '@ember/service';
 import * as State from 'oncore/pods/home/state';
 import * as Seidr from 'seidr';
@@ -18,7 +18,7 @@ class HomeRoute extends Route {
   public declare router: RouterService;
 
   @service
-  public declare stickbot: Stickbot;
+  public declare stickbotTables: TableIndex;
 
   public beforeModel(): void {
     const { router, session } = this;
@@ -30,9 +30,10 @@ class HomeRoute extends Route {
   }
 
   public async model(): Promise<Seidr.Result<Error, State.Model>> {
-    const { stickbot, session } = this;
+    const { stickbotTables: tableIndex, session } = this;
     debug('loading tables');
-    const tables = await stickbot.tables();
+
+    const tables = await tableIndex.seek();
     debug('finished loading tables %o', tables);
 
     const maybeModel = helpers

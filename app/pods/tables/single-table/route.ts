@@ -1,5 +1,5 @@
 import Route from '@ember/routing/route';
-import type Stickbot from 'oncore/services/stickbot';
+import type Stickbot from 'oncore/services/stickbot-tables';
 import type SessionService from 'oncore/services/session';
 import type RouterService from '@ember/routing/router-service';
 import { inject as service } from '@ember/service';
@@ -17,7 +17,7 @@ type Params = {
 
 class TableRoute extends Route {
   @service
-  public declare stickbot: Stickbot;
+  public declare stickbotTables: Stickbot;
 
   @service
   public declare router: RouterService;
@@ -36,7 +36,7 @@ class TableRoute extends Route {
   }
 
   public async model(params: Params): Promise<Seidr.Result<Error, State.State>> {
-    const { stickbot, session } = this;
+    const { stickbotTables: stickbot, session } = this;
     const identity = helpers.orErr(new Error('unauth'), session.currentSession);
     debug('loading table details - "%s"', params.table);
     return await promises.asyncFlatMap(identity, (session) => State.load(stickbot, params.table, session));

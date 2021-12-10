@@ -4,25 +4,29 @@ import type RouterUtils from 'oncore/services/router-utility';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import debugLogger from 'ember-debug-logger';
-import * as Stickbot from 'oncore/services/stickbot';
+import * as StickbotTables from 'oncore/services/stickbot-tables';
+import * as StickbotTableMembership from 'oncore/services/stickbot-table-membership';
 
 const debug = debugLogger('controller:home');
 
 class HomeController extends Controller {
   @service
-  public stickbot!: Stickbot.default;
+  public declare stickbotTables: StickbotTables.default;
 
   @service
-  public session!: SessionService;
+  public declare stickbotTableMembership: StickbotTableMembership.default;
+
+  @service
+  public declare session: SessionService;
 
   @service
   public routerUtility!: RouterUtils;
 
   @action
-  public async leaveTable(table: Stickbot.Table): Promise<void> {
-    const { stickbot, session, routerUtility: router } = this;
-    debug('joining table - %j', table);
-    const result = await stickbot.leave(table.id);
+  public async leaveTable(id: string): Promise<void> {
+    const { stickbotTableMembership: stickbot, session, routerUtility: router } = this;
+    debug('leaving table - "%j"', id);
+    const result = await stickbot.leave(id);
 
     // We are reloading the session here to re-hydrate some of the global user information displayed higher.
     await session.identify();
@@ -37,10 +41,10 @@ class HomeController extends Controller {
   }
 
   @action
-  public async joinTable(table: Stickbot.Table): Promise<void> {
-    const { stickbot, session, routerUtility: router } = this;
-    debug('joining table - %j', table);
-    const result = await stickbot.join(table.id);
+  public async joinTable(id: string): Promise<void> {
+    const { stickbotTableMembership: stickbot, session, routerUtility: router } = this;
+    debug('joining table - "%s"', id);
+    const result = await stickbot.join(id);
 
     // We are reloading the session here to re-hydrate some of the global user information displayed higher.
     await session.identify();
@@ -49,15 +53,15 @@ class HomeController extends Controller {
       Err: (error) => window.alert(`${error.message}`),
       Ok: () => {
         debug('successfully joined');
-        router.transitionTo('tables.single-table', table.id);
+        router.transitionTo('tables.single-table', id);
       },
     });
   }
 
   @action
   public async createTable(): Promise<void> {
-    const { stickbot, routerUtility: router } = this;
-    const tableId = (await stickbot.createTable()).getOrElse(undefined);
+    const { stickbotTables: stickbot, routerUtility: router } = this;
+    const tableId = (await stickbot.create()).getOrElse(undefined);
 
     if (!tableId) {
       debug('failed creating new table');
