@@ -83,7 +83,6 @@ a:hover {
 .modal-content {
   @apply inline-block p-8 border border-solid border-gray-600 bg-white z-30 relative;
   @apply rounded-sm shadow-sm;
-  @applu
   margin: auto;
 }
 
