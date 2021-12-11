@@ -46,8 +46,10 @@ input[type=text] {
   @apply bg-white border-gray-400 border;
 }
 
-table th {
+table tr:first-child th,
+table tr:first-child td.table-head {
   @apply font-bold;
+  @apply bg-white;
 }
 
 table th,

@@ -70,22 +70,38 @@
   </div>
 
   <div data-role="table-history" class="lg:flex-1 lg:ml-2 block">
-    <table class="table-fixed w-full">
-      <thead>
-        <tr>
-          <td colspan={{2}}>{{t "table_view.roll_history"}}</td>
-          <td>{{t "table_view.roll_total"}}</td>
-        </tr>
-      </thead>
+    <table class="table-auto w-full">
       <tbody>
         <tr>
-          <td colspan={{2}}>{{t "table_view.button"}}</td>
-          <td>{{this.state.table.button}}</td>
+          <td>
+            {{#if this.state.table.button}}
+              <i class="fa fa-circle" />
+            {{else}}
+              <i class="far fa-circle" />
+            {{/if}}
+          </td>
+          <td class="table-head" colspan={{2}}>
+            <div class="flex items-center">
+              <p>{{t "table_view.button"}}</p>
+            </div>
+          </td>
+          <td class="table-head">
+            <p>{{this.state.table.button}}</p>
+          </td>
         </tr>
       </tbody>
       <tbody>
+        <tr>
+          <td colspan={{3}}>{{t "table_view.roll_history"}}</td>
+          <td>{{t "table_view.roll_total"}}</td>
+        </tr>
         {{#each this.state.rollHistory key="@index" as |roll index|}}
-          <tr class={{if (eq index 0) "bg-gray-100" "text-gray-400"}}>
+          <tr>
+            <td class="w-4">
+              {{#if (eq index 0)}}
+                <i class="fa fa-chevron-right" />
+              {{/if}}
+            </td>
             <td>
               <DiceIcon @roll={{roll.left}} class="text-xl" />
             </td>
