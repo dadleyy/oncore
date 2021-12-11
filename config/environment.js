@@ -11,6 +11,7 @@ module.exports = function (environment) {
     externalRoutes: {
       auth: {
         start: 'http://0.0.0.0:8611/auth/start',
+        logout: 'http://0.0.0.0:8611/auth/logout',
       },
     },
     EmberENV: {
@@ -21,9 +22,10 @@ module.exports = function (environment) {
   };
 
   if (environment === 'production') {
-    ENV.rootURL = process.env['ONCORE_ROOT_URL'];
-    ENV.apiURL = process.env['ONCORE_TWOWAIYO_API_URL'];
-    ENV.externalRoutes.auth.start = process.env['ONCORE_TWOWAIYO_AUTH_START_URL'];
+    ENV.rootURL = process.env['ONCORE_ROOT_URL'] || ENV.rootURL;
+    ENV.apiURL = process.env['ONCORE_TWOWAIYO_API_URL'] || ENV.apiURL;
+    ENV.externalRoutes.auth.start = process.env['ONCORE_TWOWAIYO_AUTH_START_URL'] || ENV.externalRoutes.auth.start;
+    ENV.externalRoutes.auth.logout = process.env['ONCORE_TWOWAIYO_AUTH_LOGOUT_URL'] || ENV.externalRoutes.auth.logout;
   }
 
   if (environment === 'test') {

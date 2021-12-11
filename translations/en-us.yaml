@@ -1,3 +1,4 @@
+placeholder: "Pending UI Spot"
 wager_input_placeholder: "Enter Your {kind} Wager Amount"
 roll: "Roll"
 rolling: "Rolling..."
@@ -6,6 +7,7 @@ application:
     home: "Home"
 home:
   create_table: "Create Table"
+  all_tables: "All Tables"
   actions:
     view_table: "View"
     leave_table: "Leave"
@@ -13,9 +15,12 @@ home:
   columns:
     table_id: "Table"
     actions: "Actions"
+    population: "Population"
 login:
   login: "Log In"
 table_view:
+  no_selection: "Select a player to view their bets"
+  players: "Players"
   failed_bet: "Failed Bet"
   roller: "Roller"
   roll_total: "Roll Total"

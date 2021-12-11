@@ -2,10 +2,7 @@
   <when.just as |user|>
     <div class="flex items-center">
       <p class="block">{{user.nickname}} | {{user.balance}}</p>
-
-      {{#if this.isAdmin}}
-        <button class="ml-2" type="button" {{on "click" this.setBalance}}><i class="fa fa-dollar-sign" /></button>
-      {{/if}}
+      <a class="ml-2" type="button" rel="noopener" href={{this.logoutURL}}><i class="fa fa-sign-out" /></a>
     </div>
   </when.just>
 </CaseOf>

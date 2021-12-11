@@ -34,7 +34,7 @@ button:hover,
 button:disabled,
 .button:disabled,
 .button[aria-disabled=true] {
-  @apply bg-gray-300 border-gray-400 text-gray-700 cursor-not-allowed;
+  @apply bg-gray-400 border-gray-400 text-gray-700 cursor-not-allowed;
 }
 
 
@@ -43,12 +43,22 @@ input[type=text] {
 }
 
 input[type=text] {
-  @apply bg-white border-gray-300 border;
+  @apply bg-white border-gray-400 border;
+}
+
+table tr:first-child th,
+table tr:first-child td.table-head {
+  @apply font-bold;
+  @apply bg-white;
 }
 
 table th,
 table td {
-  @apply px-2 py-1 border-gray-300 border border-solid;
+  @apply px-2 py-1 border-gray-400 border border-solid text-left;
+}
+
+table tr:nth-child(odd) td {
+  @apply bg-gray-100;
 }
 
 a {
@@ -103,4 +113,42 @@ button.warning {
 
 button.warning:hover {
   @apply bg-yellow-400;
+}
+
+.tab-container {
+  @apply flex items-center;
+}
+
+.tab {
+  @apply border-solid border border-gray-400 px-3 py-2 inline-block;
+  @apply border-r-0;
+  @apply bg-gray-200;
+  @apply relative;
+}
+
+.tab:first-child {
+  @apply rounded-bl;
+  @apply rounded-tl;
+}
+
+.tab:last-child {
+  @apply border-r;
+  @apply rounded-br;
+  @apply rounded-tr;
+}
+
+.active-tab {
+  @apply bg-white;
+  overflow: hidden;
+}
+
+.active-tab:after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  left: calc(50% - 5px);
+  top: -5px;
+  transform: rotate(45deg);
+  @apply bg-gray-500;
 }

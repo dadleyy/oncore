@@ -21,27 +21,9 @@ export type Bet = {
   field?: number;
 };
 
-export type Seat = {
-  balance: number;
-  bets: Array<Bet>;
-};
-
 export type Table = {
   id: string;
   nonce: string;
-  name: string;
-  roller: string | null;
-  seats: Record<string, Seat>;
-  rolls: Array<[number, number]>;
-};
-
-type BetFailed = {
-  BetFailed: string;
-};
-
-export type JobStatus = {
-  id: string;
-  output?: 'BetProcessed' | BetFailed;
 };
 
 export type BetSubmissionResult = Seidr.Result<Error, BetSubmission>;
@@ -57,22 +39,13 @@ async function post<T>(url: string, body: string): Promise<Seidr.Result<Error, T
 }
 
 class Stickbot extends Service {
-  public async leave(id: string): Promise<Seidr.Result<Error, []>> {
-    const body = JSON.stringify({ id });
-    const result = await post(`${config.apiURL}/leave-table`, body);
-    return result.map(() => []);
+  public async fetch<T>(url: string): Promise<Seidr.Result<Error, T>> {
+    const result = await promises.awaitResult(fetchApi(`${config.apiURL}${url}`));
+    return await promises.asyncMap(result, (response) => response.json());
   }
 
-  public async join(id: string): Promise<Seidr.Result<Error, []>> {
-    const body = JSON.stringify({ id });
-    const result = await post(`${config.apiURL}/join-table`, body);
-    debug('joining table "%s"', id);
-    return result.map(() => []);
-  }
-
-  public async job(id: string): Promise<Seidr.Result<Error, JobStatus>> {
-    const result = await promises.awaitResult(fetchApi(`${config.apiURL}/job?id=${id}`, {}));
-    return promises.asyncMap(result, (res) => res.json());
+  public async post<D, T>(url: string, data?: D): Promise<Seidr.Result<Error, T>> {
+    return post(url, data ? JSON.stringify(data) : '');
   }
 
   public async roll(table: Pick<Table, 'id' | 'nonce'>): Promise<Seidr.Result<Error, BetSubmission>> {
@@ -130,24 +103,6 @@ class Stickbot extends Service {
     const submission = await post<BetSubmission>(`${config.apiURL}/bets`, body);
     debug('bet submission %j', submission);
     return submission;
-  }
-
-  public async createTable(): Promise<Seidr.Result<Error, string>> {
-    const result = await post<TableCreationResponse>(`${config.apiURL}/tables`, '');
-    debug('table creation completed with "%j"', result);
-    return result.map((res) => res.id);
-  }
-
-  public async table(id: string): Promise<Seidr.Result<Error, Table>> {
-    const result = await promises.awaitResult(fetchApi(`${config.apiURL}/table?id=${id}`));
-    const tables = await promises.asyncMap(result, (response) => response.json());
-    return tables;
-  }
-
-  public async tables(): Promise<Seidr.Result<Error, Array<Table>>> {
-    const result = await promises.awaitResult(fetchApi(`${config.apiURL}/tables`));
-    const tables = await promises.asyncMap(result, (response) => response.json());
-    return tables;
   }
 }
 
