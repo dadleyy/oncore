@@ -32,6 +32,7 @@ module.exports = {
         './.prettierrc.js',
         './.template-lintrc.js',
         './ember-cli-build.js',
+        './tailwindcss-config.js',
         './testem.js',
         './blueprints/*/index.js',
         './config/**/*.js',
