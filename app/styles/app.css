@@ -62,6 +62,7 @@ table tr:nth-child(odd) td {
 }
 
 a {
+  @apply bg-transparent;
   @apply text-blue-500;
 }
 

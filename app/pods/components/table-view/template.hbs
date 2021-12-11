@@ -47,6 +47,7 @@
             <div class="flex-1 mr-10">
               <button
                 disabled={{or this.state.busy (is-just this.state.pendingRoll) (not this.isRoller)}}
+                {{on "click" this.roll}}
                 type="button"
               >
                 {{if (is-just this.state.pendingRoll) (t "rolling") (t "roll")}}
@@ -58,7 +59,7 @@
               @busy={{or (is-just this.state.pendingRoll) this.state.busy}}
               @bets={{seat.bets}}
               @attempt={{this.bet}}
-              class="flex items-center flex-wrap space-x-4 flex-8"
+              class="flex items-center flex-wrap gap-x-4 flex-8 gap-y-4"
             />
           </div>
         {{/if}}
