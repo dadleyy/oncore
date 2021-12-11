@@ -45,7 +45,7 @@ class Stickbot extends Service {
   }
 
   public async post<D, T>(url: string, data?: D): Promise<Seidr.Result<Error, T>> {
-    return post(url, data ? JSON.stringify(data) : '');
+    return post(`${config.apiURL}${url}`, data ? JSON.stringify(data) : '');
   }
 
   public async roll(table: Pick<Table, 'id' | 'nonce'>): Promise<Seidr.Result<Error, BetSubmission>> {
