@@ -1,7 +1,7 @@
 <CaseOf @kind={{this.user}} as |when|>
   <when.just as |user|>
     <div class="flex items-center">
-      <p class="block">{{user.nickname}} | {{user.balance}}</p>
+      <p class="block"><LinkTo @route="account">{{user.nickname}}</LinkTo>  | {{user.balance}}</p>
       <a class="ml-2" type="button" rel="noopener" href={{this.logoutURL}}><i class="fa fa-sign-out" /></a>
     </div>
   </when.just>

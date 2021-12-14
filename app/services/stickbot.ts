@@ -7,10 +7,6 @@ import debugLogger from 'ember-debug-logger';
 
 const debug = debugLogger('service:stickbot');
 
-export type TableCreationResponse = {
-  id: string;
-};
-
 export type BetSubmission = {
   job: string;
 };
@@ -46,6 +42,10 @@ class Stickbot extends Service {
 
   public async post<D, T>(url: string, data?: D): Promise<Seidr.Result<Error, T>> {
     return post(`${config.apiURL}${url}`, data ? JSON.stringify(data) : '');
+  }
+
+  public async deleteAccount(): Promise<Seidr.Result<Error, string>> {
+    return await this.post('/delete-account');
   }
 
   public async roll(table: Pick<Table, 'id' | 'nonce'>): Promise<Seidr.Result<Error, BetSubmission>> {
