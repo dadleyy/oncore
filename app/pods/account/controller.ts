@@ -26,7 +26,7 @@ class AccountController extends Controller {
 
     const success = result.caseOf({
       Ok: () => true,
-      Err: error => {
+      Err: (error) => {
         debug('account deletion failed - %s', error);
         window.alert('unable to delete account');
         return false;
