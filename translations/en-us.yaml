@@ -1,5 +1,6 @@
 placeholder: "Pending UI Spot"
 wager_input_placeholder: "Enter Your {kind} Wager Amount"
+delete_account: "Delete Account"
 roll: "Roll"
 rolling: "Rolling..."
 application:

@@ -9,6 +9,8 @@ export default class Router extends EmberRouter {
 Router.map(function () {
   this.route('login');
   this.route('home');
+  this.route('account');
+
   this.route('tables', function () {
     this.route('single-table', { path: '/:table' });
   });
