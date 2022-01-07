@@ -2,9 +2,9 @@ import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import debugLogger from 'ember-debug-logger';
+import config from 'oncore/config/environment';
 import Stickbot from 'oncore/services/stickbot';
 import Session from 'oncore/services/session';
-import RouterUtility from 'oncore/services/router-utility';
 
 const debug = debugLogger('controller:account');
 
@@ -15,12 +15,9 @@ class AccountController extends Controller {
   @service
   public declare session: Session;
 
-  @service
-  public declare routerUtility: RouterUtility;
-
   @action
   public async deleteAccount(): Promise<void> {
-    const { stickbot, session, routerUtility } = this;
+    const { stickbot } = this;
     debug('deleting account');
     const result = await stickbot.deleteAccount();
 
@@ -38,8 +35,8 @@ class AccountController extends Controller {
       return;
     }
 
-    await session.identify();
-    routerUtility.transitionTo('login');
+    debug('account deletion success, clearing session');
+    window.location.href = config.externalRoutes.auth.logout;
   }
 }
 
