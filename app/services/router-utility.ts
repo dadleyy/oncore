@@ -21,7 +21,7 @@ class RouterUtils extends Service {
   }
 
   // TODO: https://github.com/emberjs/rfcs/blob/master/text/0631-refresh-method-for-router-service.md
-  public refresh(name?: string): void {
+  public refresh(name?: string): Promise<void> {
     const { router } = this;
     debug('attempting to refresh "%s"', name);
 
@@ -33,7 +33,7 @@ class RouterUtils extends Service {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line ember/no-private-routing-service
-    router._router._routerMicrolib.refresh(info ? info.route : undefined);
+    return router._router._routerMicrolib.refresh(info ? info.route : undefined);
   }
 }
 

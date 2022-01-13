@@ -2,7 +2,7 @@
   <case.err>
     <div data-role="error">{{t "errors.home.failed_load"}}</div>
   </case.err>
-  <case.ok as |model|>
+  <case.ok>
     <div class="lg:flex lg:flex-start block">
       <div class="lg:flex-2 lg:pr-4 mb-4 lg:mb-0" data-role="all-tables">
         <div class="mb-2 flex items-center">
@@ -13,7 +13,7 @@
             </button>
           </div>
         </div>
-        <table class="table-auto w-full"  {{will-destroy this.stopPolling}}>
+        <table class="table-auto w-full" {{will-destroy this.stopPolling}}>
           <thead>
             <tr>
               <th>{{t "home.columns.table_id"}}</th>

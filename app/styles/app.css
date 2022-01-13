@@ -66,10 +66,15 @@ button.icon,
 
 input[type=text] {
   @apply px-2 py-1 rounded-sm;
+  background-color: rgba(0,0,0,0.85);
+  border: 1px solid rgba(255,255,255,0.20);
+  outline: none;
+  color: rgba(255,255,255,0.50);
 }
 
-input[type=text] {
-  @apply bg-white border-gray-400 border;
+input[type=text]:focus {
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.60);
 }
 
 table {
@@ -133,7 +138,7 @@ table tr:nth-child(odd) td {
 }
 
 .modal-content {
-  @apply inline-block p-8 border border-solid border-gray-600 bg-white z-30 relative;
+  @apply inline-block p-8 z-30 relative;
   @apply rounded-sm shadow-sm;
   margin: auto;
 }
@@ -149,8 +154,8 @@ table tr:nth-child(odd) td {
 }
 
 .modal-overlay {
-  @apply bg-white z-20;
-  opacity: 0.75;
+  @apply z-20;
+  background-color: rgba(0, 0, 0, 0.80);
 }
 
 .modal-positioner {

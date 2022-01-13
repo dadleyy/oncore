@@ -5,7 +5,7 @@ import type RouterUtils from 'oncore/services/router-utility';
 import * as maybeHelpers from 'oncore/utility/maybe-helpers';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { next, later, cancel } from '@ember/runloop';
+import { later, cancel } from '@ember/runloop';
 import { EmberRunTimer } from '@ember/runloop/types';
 import * as State from 'oncore/pods/home/state';
 import { inject as service } from '@ember/service';
@@ -132,7 +132,7 @@ class HomeController extends Controller {
   }
 
   private async poll(jobs: Array<PendingJob>): Promise<void> {
-    const { toasts, stickbotJobs, routerUtility } = this;
+    const { toasts, stickbotJobs, routerUtility, session } = this;
 
     if (!jobs.length) {
       debug('nothing to poll, skipping');
@@ -159,19 +159,17 @@ class HomeController extends Controller {
             switch (job.kind) {
               case 'JOINING':
                 debug('join attempt "%s" complete', job.id);
-                routerUtility.transitionTo('tables.single-table', job.table);
+                routerUtility.transitionTo('tables.single-table', job.table).then(() => session.identify());
                 return Seidr.Nothing();
               case 'LEAVING':
                 debug('stand attempt "%s" complete', job.id);
-                routerUtility.refresh();
+                routerUtility.refresh().then(() => session.identify());
                 return Seidr.Nothing();
             }
           });
         },
       });
     });
-
-    next.name;
 
     this._poll = { id: later(this, this.poll, maybeHelpers.flatten(pending), 1000) };
   }
