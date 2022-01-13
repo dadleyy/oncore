@@ -13,7 +13,7 @@
             </button>
           </div>
         </div>
-        <table class="table-auto w-full" {{did-insert this.pollJobs}} {{will-destroy this.stopPolling}}>
+        <table class="table-auto w-full"  {{will-destroy this.stopPolling}}>
           <thead>
             <tr>
               <th>{{t "home.columns.table_id"}}</th>
@@ -27,8 +27,10 @@
                 <td class="w-8/12">{{row.table.name}}</td>
                 <td>{{row.population}}</td>
                 <td>
-                  {{#if row.busy}}
-                    <i class="fa fa-times" />
+                  {{#if (eq row.busy 'JOINING')}}
+                    <p>{{t "joining_table"}}</p>
+                  {{else if (eq row.busy 'LEAVING')}}
+                    <p>{{t "leaving_table"}}</p>
                   {{else}}
                     {{#if row.joined}}
                       <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>

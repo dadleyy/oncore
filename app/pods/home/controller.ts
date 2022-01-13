@@ -2,12 +2,12 @@ import Controller from '@ember/controller';
 import * as Seidr from 'seidr';
 import type SessionService from 'oncore/services/session';
 import type RouterUtils from 'oncore/services/router-utility';
+import * as maybeHelpers from 'oncore/utility/maybe-helpers';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { later, cancel } from '@ember/runloop';
+import { next, later, cancel } from '@ember/runloop';
 import { EmberRunTimer } from '@ember/runloop/types';
 import * as State from 'oncore/pods/home/state';
-import { yes } from 'oncore/utility/fp-helpers';
 import { inject as service } from '@ember/service';
 import debugLogger from 'ember-debug-logger';
 import * as StickbotTables from 'oncore/services/stickbot-tables';
@@ -17,11 +17,17 @@ import Toasts, { StickbotFailure, SimpleWarning } from 'oncore/services/toasts';
 
 const debug = debugLogger('controller:home');
 
+type PendingJob = {
+  id: string;
+  table: string;
+  kind: 'JOINING' | 'LEAVING';
+};
+
 class HomeController extends Controller {
   public declare model: State.ModelResult;
 
   @tracked
-  public jobs: Array<{ id: string; table: string; kind: 'JOINING' | 'LEAVING' }> = [];
+  public jobs: Array<PendingJob> = [];
 
   @tracked
   public _poll?: { id: EmberRunTimer };
@@ -52,7 +58,7 @@ class HomeController extends Controller {
 
       return {
         ...row,
-        busy: job.map(yes).getOrElse(false),
+        busy: job.map((j) => j.kind).getOrElse(undefined),
       };
     });
   }
@@ -64,8 +70,12 @@ class HomeController extends Controller {
     const jobResult = await stickbot.leave(tableId);
     jobResult.caseOf({
       Ok: (jobId) => {
-        const jobs = [{ id: jobId, table: tableId, kind: 'LEAVING' }, ...this.jobs];
+        const jobs = [{ id: jobId, table: tableId, kind: 'LEAVING' as State.RowOperation }, ...this.jobs];
+        if (this._poll) {
+          cancel(this._poll.id);
+        }
         this.jobs = jobs;
+        this.poll(this.jobs);
       },
       Err: (error) => {
         debug('table departure failed - %o', error);
@@ -77,12 +87,16 @@ class HomeController extends Controller {
   @action
   public async joinTable(tableId: string): Promise<void> {
     const { stickbotTableMembership: stickbot, toasts } = this;
-    debug('joining table - "%s"', tableId);
     const jobResult = await stickbot.join(tableId);
     jobResult.caseOf({
       Ok: (jobId) => {
-        const jobs = [{ id: jobId, table: tableId, kind: 'JOINING' }, ...this.jobs];
+        debug('joining table - "%s" via job "%s"', tableId, jobId);
+        const jobs = [{ id: jobId, table: tableId, kind: 'JOINING' as State.RowOperation }, ...this.jobs];
+        if (this._poll) {
+          cancel(this._poll.id);
+        }
         this.jobs = jobs;
+        this.poll(this.jobs);
       },
       Err: (error) => {
         debug('unable to queue seating - %o', error);
@@ -117,67 +131,49 @@ class HomeController extends Controller {
     }
   }
 
-  @action
-  public pollJobs(): void {
-    debug('starting job poll');
-    this.poll();
-  }
-
-  private async poll(): Promise<void> {
-    const { toasts, jobs, stickbotJobs, routerUtility } = this;
+  private async poll(jobs: Array<PendingJob>): Promise<void> {
+    const { toasts, stickbotJobs, routerUtility } = this;
 
     if (!jobs.length) {
       debug('nothing to poll, skipping');
-      this._poll = { id: later(this, this.poll, 1000) };
+      this._poll = { id: later(this, this.poll, [], 1000) };
       return;
     }
 
     debug('attempting poll');
     const results = await Promise.all(jobs.map(({ id }) => stickbotJobs.find(id)));
-    const pending = jobs.slice(0, 0);
-
-    for (let i = 0; i < results.length; i++) {
-      const result = results[i];
-
-      const leaving = result.caseOf({
+    const pending = results.map((result) => {
+      return result.caseOf({
         Err: (error) => {
           debug('unable to fetch job "%s"', error);
           toasts.add(SimpleWarning('stickbot_error.bad_job'));
-          return false;
+          return Seidr.Nothing();
         },
         Ok: (response) => {
-          const original = jobs.find(({ id }) => id === response.id);
+          const original = Seidr.Maybe.fromNullable(jobs.find(({ id }) => id === response.id));
+          return original.flatMap((job) => {
+            if (!response.completed) {
+              return Seidr.Just(job);
+            }
 
-          if (!original) {
-            return false;
-          }
-
-          if (!response.completed) {
-            debug('job "%s" not complete, preparing for next poll', response.id);
-            pending.push(original);
-            return false;
-          }
-
-          switch (original.kind) {
-            case 'LEAVING':
-              debug('finished leaving table "%s"', original.table);
-              routerUtility.refresh();
-              return true;
-            case 'JOINING':
-              debug('finished joining table "%s"', original.table);
-              routerUtility.transitionTo('tables.single-table', original.table);
-              return true;
-          }
+            switch (job.kind) {
+              case 'JOINING':
+                debug('join attempt "%s" complete', job.id);
+                routerUtility.transitionTo('tables.single-table', job.table);
+                return Seidr.Nothing();
+              case 'LEAVING':
+                debug('stand attempt "%s" complete', job.id);
+                routerUtility.refresh();
+                return Seidr.Nothing();
+            }
+          });
         },
       });
+    });
 
-      if (leaving) {
-        return;
-      }
-    }
+    next.name;
 
-    this.jobs = pending;
-    this._poll = { id: later(this, this.poll, 1000) };
+    this._poll = { id: later(this, this.poll, maybeHelpers.flatten(pending), 1000) };
   }
 }
 

@@ -1,10 +1,13 @@
 'use strict';
 
 /* eslint-disable @typescript-eslint/no-var-requires */
+const dotenv = require('dotenv');
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const autoprefixer = require('autoprefixer');
 const tailwindcss = require('tailwindcss');
 /* eslint-enable @typescript-eslint/no-var-requires */
+
+dotenv.config();
 
 module.exports = function (defaults) {
   let app = new EmberApp(defaults, {
