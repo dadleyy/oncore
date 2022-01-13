@@ -13,7 +13,7 @@
             </button>
           </div>
         </div>
-        <table class="table-auto w-full">
+        <table class="table-auto w-full" {{did-insert this.pollJobs}} {{will-destroy this.stopPolling}}>
           <thead>
             <tr>
               <th>{{t "home.columns.table_id"}}</th>
@@ -22,16 +22,20 @@
             </tr>
           </thead>
           <tbody>
-            {{#each model.rows key="table.id" as |row|}}
+            {{#each this.displayedTableRows key="table.id" as |row|}}
               <tr data-table-id={{row.table.id}} data-table-version={{row.table.nonce}}>
                 <td class="w-8/12">{{row.table.name}}</td>
                 <td>{{row.population}}</td>
                 <td>
-                  {{#if row.joined}}
-                    <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>
-                    <a href="#" {{on "click" (fn this.leaveTable row.table.id)}}>{{t "home.actions.leave_table"}}</a>
+                  {{#if row.busy}}
+                    <i class="fa fa-times" />
                   {{else}}
-                    <a href="#" {{on "click" (fn this.joinTable row.table.id)}}>{{t "home.actions.join_table"}}</a>
+                    {{#if row.joined}}
+                      <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>
+                      <a href="#" {{on "click" (fn this.leaveTable row.table.id)}}>{{t "home.actions.leave_table"}}</a>
+                    {{else}}
+                      <a href="#" {{on "click" (fn this.joinTable row.table.id)}}>{{t "home.actions.join_table"}}</a>
+                    {{/if}}
                   {{/if}}
                 </td>
               </tr>
@@ -41,7 +45,6 @@
       </div>
       <div class="lg:flex-1 lg:pl-4" data-role="my-tables">
         <div class="mb-2 flex items-center">
-          <p>{{t "placeholder"}}</p>
         </div>
       </div>
     </div>

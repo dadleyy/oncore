@@ -2,6 +2,7 @@ import * as Seidr from 'seidr';
 import { dasherize } from '@ember/string';
 import debugLogger from 'ember-debug-logger';
 import * as Stickbot from 'oncore/services/stickbot-tables';
+import * as StickbotError from 'oncore/stickbot/stickbot-error';
 import * as Jobs from 'oncore/services/stickbot-jobs';
 import { CurrentSession } from 'oncore/services/session';
 import * as maybeHelpers from 'oncore/utility/maybe-helpers';
@@ -162,7 +163,7 @@ export async function hydrate(
   stickbot: Stickbot.default,
   jobs: Jobs.default,
   state: State
-): Promise<Seidr.Result<Error, State>> {
+): Promise<Seidr.Result<StickbotError.default, State>> {
   const { pendingBets: betQueue, pendingRoll: roll } = state;
   const start = await load(stickbot, state.table.id, state.session);
   const fetches = await Promise.all(betQueue.map((job) => jobs.find(job.id)));
@@ -207,7 +208,7 @@ export async function load(
   stickbot: Stickbot.default,
   id: string,
   session: CurrentSession
-): Promise<Seidr.Result<Error, State>> {
+): Promise<Seidr.Result<StickbotError.default, State>> {
   const result = await stickbot.find(id);
   return result.map((table) => parse(table, session));
 }

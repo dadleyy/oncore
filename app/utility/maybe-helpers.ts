@@ -4,7 +4,7 @@ export function zip<T, U>(first: Seidr.Maybe<T>, second: Seidr.Maybe<U>): Seidr.
   return first.flatMap((inner) => second.map((s) => [inner, s]));
 }
 
-export function orErr<T>(error: Error, maybe: Seidr.Maybe<T>): Seidr.Result<Error, T> {
+export function orErr<T, E>(error: E, maybe: Seidr.Maybe<T>): Seidr.Result<E, T> {
   return maybe.caseOf({
     Just: Seidr.Ok,
     Nothing: () => Seidr.Err(error),

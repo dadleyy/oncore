@@ -67,3 +67,7 @@ errors:
     failed_load: "Unable to load tables"
   single_table:
     failed_load: "Unable to find table"
+stickbot_errors:
+  missing_resource: "Server request failed"
+  insufficient_funds: "Insufficient Funds"
+  unknown_error: "Server request failed"

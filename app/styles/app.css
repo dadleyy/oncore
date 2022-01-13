@@ -2,7 +2,6 @@ html, body {
   position: relative;
   width: 100%;
   height: 100%;
-  background: white;
 }
 
 @tailwind base;
@@ -20,45 +19,9 @@ html {
   height: 0;
 }
 
-button,
-.button {
-  @apply px-2 py-1 bg-blue-400 rounded-sm text-white border-blue-500 border-solid border inline-block;
-  @apply whitespace-nowrap overflow-ellipsis text-center;
-}
-
-button:hover,
-.button:hover {
-  @apply bg-blue-800 border-blue-900;
-}
-
-button:disabled,
-.button:disabled,
-.button[aria-disabled=true] {
-  @apply bg-gray-400 border-gray-400 text-gray-700 cursor-not-allowed;
-}
-
-
-input[type=text] {
-  @apply px-2 py-1 rounded-sm;
-}
-
-input[type=text] {
-  @apply bg-white border-gray-400 border;
-}
-
-table tr:first-child th,
-table tr:first-child td.table-head {
-  @apply font-bold;
-  @apply bg-white;
-}
-
-table th,
-table td {
-  @apply px-2 py-1 border-gray-400 border border-solid text-left;
-}
-
-table tr:nth-child(odd) td {
-  @apply bg-gray-100;
+.color-container-1 {
+  @apply border-gray-800 bg-gray-900 text-gray-400;
+  box-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.80);
 }
 
 a {
@@ -68,6 +31,92 @@ a {
 
 a:hover {
   @apply text-blue-600;
+}
+
+button,
+.button {
+  @apply px-2 py-1 rounded-sm;
+  @apply whitespace-nowrap overflow-ellipsis text-center inline-block;
+  @apply text-blue-500;
+  background-color: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.90);
+}
+
+button:hover,
+.button:hover {
+  @apply text-blue-600;
+  background-color: rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,0,0,0.85);
+}
+
+button:disabled,
+.button:disabled,
+.button[aria-disabled=true] {
+  @apply cursor-not-allowed;
+  color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.75);
+}
+
+button.icon,
+.button.icon {
+  @apply px-0 py-0;
+  @apply border-none;
+}
+
+input[type=text] {
+  @apply px-2 py-1 rounded-sm;
+}
+
+input[type=text] {
+  @apply bg-white border-gray-400 border;
+}
+
+table {
+  border-collapse: separate; 
+  border-spacing: 0; 
+  box-shadow: 0px 1px 5px 3px rgb(255, 255, 255, 1.5%)
+}
+
+table th,
+table td {
+  @apply px-2 py-1 text-left;
+  border: 1px solid rgba(0, 0, 0, 0.95);
+  border-style: none none solid solid;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+table tr th:last-child,
+table tr td:last-child {
+  border-style: solid solid solid solid;
+}
+
+table tr th,
+table tr td.table-head {
+  border-top-style: solid;
+}
+
+table tr:first-child th,
+table tr:first-child td.table-head {
+  @apply font-bold;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 3px;
+}
+
+table th:last-child {
+  border-top-left-radius: 3px;
+}
+
+table th:first-child {
+  border-top-left-radius: 3px;
+}
+
+table tr:nth-child(odd) td {
+  @apply bg-gray-100;
+  background-color: rgba(0, 0, 0, 0.0);
 }
 
 .dropdown {
@@ -121,10 +170,10 @@ button.warning:hover {
 }
 
 .tab {
-  @apply border-solid border border-gray-400 px-3 py-2 inline-block;
+  @apply border-solid border px-3 py-2 inline-block;
   @apply border-r-0;
-  @apply bg-gray-200;
   @apply relative;
+  border-color: rgba(0,0,0,0.90);
 }
 
 .tab:first-child {
@@ -139,8 +188,8 @@ button.warning:hover {
 }
 
 .active-tab {
-  @apply bg-white;
   overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .active-tab:after {
@@ -151,5 +200,34 @@ button.warning:hover {
   left: calc(50% - 5px);
   top: -5px;
   transform: rotate(45deg);
-  @apply bg-gray-500;
+  background-color: rgba(0,0,0,0.90);
+}
+
+.toast-container {
+  @apply absolute;
+  top: 100%;
+  width: 100%;
+}
+
+.toast {
+  @apply px-4 py-3 rounded-sm flex items-center mb-3;
+  width: 50vw;
+  margin-left: 25vw;
+  background: red;
+}
+
+.toast[data-treatment=warning] {
+  @apply bg-yellow-600;
+  @apply border border-solid border-yellow-500;
+  @apply text-yellow-900;
+}
+
+.toast[data-treatment=warning] button {
+  @apply text-yellow-900;
+  background-color: rgba(0,0,0,0.00);
+}
+
+.toast[data-treatment=warning] button:hover {
+  @apply text-yellow-800;
+  background-color: rgba(0,0,0,0.00);
 }

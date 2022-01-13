@@ -1,6 +1,8 @@
 import Service from '@ember/service';
 import { inject as service } from '@ember/service';
-import type Stickbot from 'oncore/services/stickbot';
+import { CreatedJobHandle } from 'oncore/services/stickbot-jobs';
+import Stickbot from 'oncore/services/stickbot';
+import * as StickbotError from 'oncore/stickbot/stickbot-error';
 import * as Seidr from 'seidr';
 import debugLogger from 'ember-debug-logger';
 
@@ -39,19 +41,19 @@ class TableIndexService extends Service {
   @service
   public declare stickbot: Stickbot;
 
-  public async create(): Promise<Seidr.Result<Error, string>> {
+  public async create(): Promise<Seidr.Result<StickbotError.default, string>> {
     const { stickbot } = this;
-    const result = await stickbot.post<void, { id: string }>('/tables');
-    return result.map((d) => d.id);
+    const result = await stickbot.post<void, CreatedJobHandle>('/tables');
+    return result.map((d) => d.job);
   }
 
-  public async find(id: string): Promise<Seidr.Result<Error, TableDetails>> {
+  public async find(id: string): Promise<Seidr.Result<StickbotError.default, TableDetails>> {
     const { stickbot } = this;
     debug('attempting to load "%s"', id);
     return await stickbot.fetch(`/table?id=${id}`);
   }
 
-  public async seek(): Promise<Seidr.Result<Error, Array<TableIndex>>> {
+  public async seek(): Promise<Seidr.Result<StickbotError.default, Array<TableIndex>>> {
     const { stickbot } = this;
     debug('loading table index');
     return await stickbot.fetch('/tables');
