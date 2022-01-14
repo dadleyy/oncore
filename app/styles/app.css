@@ -225,6 +225,7 @@ button.warning:hover {
   @apply bg-yellow-600;
   @apply border border-solid border-yellow-500;
   @apply text-yellow-900;
+  border-left-width: 5px;
 }
 
 .toast[data-treatment=warning] button {

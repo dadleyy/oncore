@@ -138,12 +138,6 @@ export function makeBusy(state: State, busy = true): State {
   return { ...state, busy };
 }
 
-function getFailure(status: Jobs.JobStatus): Seidr.Maybe<FailedJob> {
-  return Seidr.Maybe.fromNullable(status.output).flatMap((output) =>
-    output === 'BetProcessed' ? Seidr.Nothing() : Seidr.Just({ id: status.id, reason: output.BetFailed })
-  );
-}
-
 function partitionJobs(
   partitions: [Array<PendingJob>, Array<FailedJob>],
   item: Jobs.JobStatus
@@ -152,8 +146,8 @@ function partitionJobs(
 
   debug('checking job status "%s"', item.output);
 
-  const failures = getFailure(item)
-    .map((message) => [message, ...failed])
+  const failures = Jobs.getFailureTranslation(item)
+    .map((reason) => [{ id: item.id, reason }, ...failed])
     .getOrElse(failed);
 
   return [pending.concat(item.output ? [] : item), failures];

@@ -71,5 +71,8 @@ stickbot_errors:
   missing_resource: "Server request failed"
   insufficient_funds: "Insufficient Funds"
   unknown_error: "Server request failed"
+  bet_failure:
+    invalid_come_bet: "Come bets cannot be made without a button established"
+    other: "Invalid Bet"
 joining_table: "Joining..."
 leaving_table: "Leaving..."

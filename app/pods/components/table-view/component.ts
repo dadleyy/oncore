@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import * as Stick from 'oncore/services/stickbot';
+import * as Toasts from 'oncore/services/toasts';
 import * as Stickbot from 'oncore/services/stickbot-tables';
 import * as Jobs from 'oncore/services/stickbot-jobs';
 import { action } from '@ember/object';
@@ -23,6 +24,9 @@ class TableView extends Component<{ state: State.State }> {
 
   @service
   public declare stickbotTables: Stickbot.default;
+
+  @service
+  public declare toasts: Toasts.default;
 
   @service
   public declare stickbotJobs: Jobs.default;
@@ -61,7 +65,7 @@ class TableView extends Component<{ state: State.State }> {
 
   @action
   public async startPolling(): Promise<void> {
-    const { stickbotTables: stickbot, stickbotJobs: jobs, state } = this;
+    const { stickbotTables: stickbot, toasts, stickbotJobs: jobs, state } = this;
     debug('entering poll loop for table "%s"', state.table.id);
 
     while (!this.isDestroyed) {
@@ -81,10 +85,22 @@ class TableView extends Component<{ state: State.State }> {
         continue;
       }
 
+      // If we've since received an update to our state, skip any updates that would otherwise have been applied.
       if (next.nonce !== this.state.nonce) {
         debug('stale poll (current %s | loaded %s)', this.state.nonce, next.nonce);
         await promises.sleep(POLL_DELAY);
         continue;
+      }
+
+      while (next.failedBets.length) {
+        const failure = next.failedBets.pop();
+
+        if (!failure) {
+          continue;
+        }
+
+        debug('state hydrated with some failed bet "%o"', failure);
+        toasts.add(Toasts.SimpleWarning(failure.reason));
       }
 
       this.history = [State.makeBusy(next, this.state.busy), ...this.history].slice(0, 2);
