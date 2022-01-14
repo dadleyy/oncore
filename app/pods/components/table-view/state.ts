@@ -1,8 +1,8 @@
 import * as Seidr from 'seidr';
-import { dasherize } from '@ember/string';
 import debugLogger from 'ember-debug-logger';
 import * as Stickbot from 'oncore/services/stickbot-tables';
 import * as StickbotError from 'oncore/stickbot/stickbot-error';
+import * as StickbotBets from 'oncore/stickbot/stickbot-bet';
 import * as Jobs from 'oncore/services/stickbot-jobs';
 import { CurrentSession } from 'oncore/services/session';
 import * as maybeHelpers from 'oncore/utility/maybe-helpers';
@@ -10,20 +10,13 @@ import * as uuid from 'oncore/utility/uuid';
 
 const debug = debugLogger('util:table-view.state');
 
-export type ParsedBet = {
-  state: Stickbot.Bet;
-  kind: string;
-  amount: number;
-  target: number | null;
-};
-
 export type Seat = {
   id: string;
   nickname: string;
   state: Stickbot.Seat;
   balance: number;
   hasPass: boolean;
-  bets: Array<ParsedBet>;
+  bets: Array<StickbotBets.PlacedBed>;
   comeOddsOptions: Array<number>;
 };
 
@@ -56,60 +49,34 @@ export type State = {
   nonce: string;
 };
 
-function parseBet(input: Stickbot.Bet): ParsedBet {
-  if (input.race) {
-    const [kind, amount, target] = input.race;
-    return { kind: dasherize(kind), amount, target, state: input };
-  }
-
-  if (input.target) {
-    const [kind, amount, target] = input.target;
-    return { kind: dasherize(kind), amount, target, state: input };
-  }
-
-  if (input.field) {
-    return { kind: 'field', amount: input.field, state: input, target: null };
-  }
-
-  debug('unrecognized bet payload "%j"', input);
-  return { kind: '', state: input, amount: 0, target: null };
-}
-
-function parseSeat(input: Stickbot.Seat): Seat {
-  const bets = input.bets.map(parseBet);
-
+function mapSeat(input: Stickbot.Seat): Seat {
   return {
-    id: '',
-    bets,
+    ...input,
     state: input,
-    balance: input.balance,
-    nickname: input.nickname,
-    comeOddsOptions: bets
-      .filter((b) => b.kind === 'come')
-      .reduce((acc, b) => (b.target ? [...acc, b.target] : acc), []),
-    hasPass: bets.some((bet) => dasherize(bet.kind) === 'pass'),
+    hasPass: false,
+    comeOddsOptions: [],
   };
 }
 
 function parse(table: Stickbot.TableDetails, session: CurrentSession): State {
-  const player = table.seats[session.id];
-  const playerPosition = Seidr.Maybe.fromNullable(player).map(parseSeat);
+  const mappedSeats = table.seats.map(mapSeat);
+  const player = mappedSeats.find(s => s.id === session.id);
+  const playerPosition = Seidr.Maybe.fromNullable(player);
   const rollHistory = table.rolls.map(([left, right]) => ({
     left,
     right,
     total: left + right,
   }));
 
-  const seats = (Object.entries(table.seats || {}) || []).map(([id, seat]) => ({ ...parseSeat(seat), id }));
-  const selectedSeat = playerPosition.map((seat) => ({ ...seat, id: session.id })).orElse(() => Seidr.Just(seats[0]));
-
+  const selectedSeat = playerPosition.map((seat) => ({ ...seat, id: session.id }))
+    .orElse(() => Seidr.Maybe.fromNullable(mappedSeats[0]));
 
   return {
     table,
     playerPosition,
     rollHistory,
     session,
-    seats,
+    seats: mappedSeats,
     selectedSeat,
     pendingBets: [],
     failedBets: [],

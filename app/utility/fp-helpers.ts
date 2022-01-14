@@ -7,3 +7,4 @@ export function identity<T>(i: T): T {
 }
 
 export const yes = always(true);
+export const no = always(false);

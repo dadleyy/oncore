@@ -4,24 +4,21 @@ import { inject as service } from '@ember/service';
 import { cancel, later } from '@ember/runloop';
 import debugLogger from 'ember-debug-logger';
 import Modals from 'oncore/services/modals';
-import * as State from 'oncore/pods/components/table-view/state';
-import * as Seidr from 'seidr';
+// import * as State from 'oncore/pods/components/table-view/state';
+// import * as Seidr from 'seidr';
 import * as maybeHelpers from 'oncore/utility/maybe-helpers';
 import * as BetAttempts from 'oncore/pods/components/bet-controls/bet-attempt';
+import * as StickbotBets from 'oncore/stickbot/stickbot-bet';
 import { KEY } from 'oncore/pods/components/bet-controls/wager-input-modal/component';
 
 const debug = debugLogger('component:bet-controls');
 
 type Timeout = ReturnType<typeof later>;
 
-function getComeTarget(bet: State.ParsedBet): Seidr.Maybe<number> {
-  return bet.kind === 'come' ? Seidr.Maybe.fromNullable(bet.target) : Seidr.Nothing();
-}
-
 export type Args = {
   button?: number;
   busy?: boolean;
-  bets: Array<State.ParsedBet>;
+  bets: Array<StickbotBets.PlacedBed>;
   attempt: (attempt: BetAttempts.default) => void;
 };
 
@@ -62,12 +59,12 @@ class BetControls extends Component<Args> {
 
   public get hasPass(): boolean {
     const { bets = [] } = this.args;
-    return bets.some((bet) => bet.kind === 'pass');
+    return bets.some(StickbotBets.isPass);
   }
 
   public get comeOddsOptions(): Array<number> {
     const { bets = [] } = this.args;
-    const maybeComes = bets.map(getComeTarget);
+    const maybeComes = bets.map(StickbotBets.getComeTarget);
     return maybeHelpers.flatten(maybeComes);
   }
 

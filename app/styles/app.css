@@ -125,8 +125,11 @@ table tr:nth-child(odd) td {
 }
 
 .dropdown {
-  @apply bg-white border-solid border border-gray-400 rounded-sm shadow-sm;
+  @apply rounded-sm shadow-sm;
   min-width: 200px;
+  background-color: rgba(0,0,0,0.75);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.60);
 }
 
 .dropdown-option {
@@ -134,7 +137,8 @@ table tr:nth-child(odd) td {
 }
 
 .dropdown-option:hover {
-  @apply bg-gray-100;
+  background-color: rgba(0,0,0,0.90);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .modal-content {
@@ -234,16 +238,4 @@ button.warning:hover {
 .avatar[data-active] {
   background-color: rgba(0, 255, 255, 0.1);
   border: 2px solid rgba(0, 255, 255, 0.90);
-}
-
-.avatar[data-active]:after {
-  content: '';
-  @apply absolute left-0;
-  display: block;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.10);
-  border-radius: 50%;
-  top: -20px;
 }

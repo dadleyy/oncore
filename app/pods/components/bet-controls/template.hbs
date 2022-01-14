@@ -45,22 +45,24 @@
     @onSelect={{fn this.bet "place"}}
   />
 
-  <BasicDropdown @disabled={{or @busy (not this.comeOddsOptions.length)}} as |dropdown|>
-    <dropdown.Trigger class="button flex-1">{{t "table_view.bets.come_odds"}}</dropdown.Trigger>
-    <dropdown.Content class="dropdown">
-      {{#each this.comeOddsOptions as |option|}}
-        <div
-          data-role="come-odds-option"
-          class="dropdown-option"
-          type="button"
-          role="button"
-          {{on "click" (queue dropdown.actions.close (fn this.bet "come-odds" option))}}
-        >
-          {{option}}
-        </div>
-      {{/each}}
-    </dropdown.Content>
-  </BasicDropdown>
+  <div class="relative">
+    <BasicDropdown @disabled={{or @busy (not this.comeOddsOptions.length)}} as |dropdown|>
+      <dropdown.Trigger class="button flex-1">{{t "table_view.bets.come_odds"}}</dropdown.Trigger>
+      <dropdown.Content class="dropdown">
+        {{#each this.comeOddsOptions as |option|}}
+          <div
+            data-role="come-odds-option"
+            class="dropdown-option"
+            type="button"
+            role="button"
+            {{on "click" (queue dropdown.actions.close (fn this.bet "come-odds" option))}}
+          >
+            {{option}}
+          </div>
+        {{/each}}
+      </dropdown.Content>
+    </BasicDropdown>
+  </div>
 </div>
 
 <BetControls::WagerInputModal />

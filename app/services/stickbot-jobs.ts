@@ -8,13 +8,29 @@ import debugLogger from 'ember-debug-logger';
 
 const debug = debugLogger('service:stickbot-jobs');
 
+export const JOB_CONSTANTS = {
+  ROLL_PROCESED: 'roll_processed',
+  TABLE_CREATED: 'table_created',
+  BET_FAILED: 'bet_failed',
+  BET_PROCESSED: 'bet_processed',
+};
+
 export type JobOutputVariants = {
+  RollProcessed: [];
   TableCreated: [string];
   BetFailure: [string];
   BetProcessed: [];
 };
 
 export class JobOutput extends SumType<JobOutputVariants> {}
+
+export function BetProcessed(): JobOutput {
+  return new JobOutput('BetProcessed');
+}
+
+export function RollProcessed(): JobOutput {
+  return new JobOutput('RollProcessed');
+}
 
 export function TableCreated(id: string): JobOutput {
   return new JobOutput('TableCreated', id);
@@ -38,8 +54,9 @@ export function getCreatedTableId(job: JobStatus): Seidr.Maybe<string> {
   const output = Seidr.Maybe.fromNullable(job.output);
   return output.flatMap((out) => {
     return out.caseOf({
-      BetFailure: () => Seidr.Nothing(),
-      BetProcessed: () => Seidr.Nothing(),
+      BetFailure: Seidr.Nothing,
+      BetProcessed: Seidr.Nothing,
+      RollProcessed: Seidr.Nothing,
       TableCreated: (id) => Seidr.Just(id),
     });
   });
@@ -50,8 +67,9 @@ export function getFailureTranslation(job: JobStatus): Seidr.Maybe<string> {
   return output.flatMap((out) => {
     return out.caseOf({
       BetFailure: (reason) => Seidr.Just(`stickbot_errors.bet_failure.${reason}`),
-      BetProcessed: () => Seidr.Nothing(),
-      TableCreated: () => Seidr.Nothing(),
+      RollProcessed: Seidr.Nothing,
+      BetProcessed: Seidr.Nothing,
+      TableCreated: Seidr.Nothing,
     });
   });
 }
@@ -69,6 +87,20 @@ function parseResponse(res: JobResponse): JobStatus {
     return { ...res, output: undefined };
   }
 
+  if (typeof output === 'string' && output === JOB_CONSTANTS.ROLL_PROCESED) {
+    return {
+      ...res,
+      output: RollProcessed(),
+    };
+  }
+
+  if (typeof output === 'string' && output === JOB_CONSTANTS.BET_PROCESSED) {
+    return {
+      ...res,
+      output: BetProcessed(),
+    };
+  }
+
   if (typeof output === 'string') {
     return {
       ...res,
@@ -76,17 +108,17 @@ function parseResponse(res: JobResponse): JobStatus {
     };
   }
 
-  if (output['table_created']) {
+  if (output[JOB_CONSTANTS.TABLE_CREATED]) {
     return {
       ...res,
-      output: TableCreated(output['table_created']),
+      output: TableCreated(output[JOB_CONSTANTS.TABLE_CREATED]),
     };
   }
 
-  if (output['bet_failed']) {
+  if (output[JOB_CONSTANTS.BET_FAILED]) {
     return {
       ...res,
-      output: BetFailure(output['bet_failed']),
+      output: BetFailure(output[JOB_CONSTANTS.BET_FAILED]),
     };
   }
 
