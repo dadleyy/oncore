@@ -17,7 +17,7 @@
             <td>
               <CaseOf @kind={{target}} as |when|>
                 <when.nothing>
-                  7, 11
+                  {{t "table_view.static_bet_wins.pass"}}
                 </when.nothing>
                 <when.just as |target|>
                   {{target}}
@@ -31,7 +31,7 @@
           <tr>
             <td>{{t "table_view.bets.field"}}</td>
             <td>{{amount}}</td>
-            <td>2, 3, 4, 9, 10, 11, or 12</td>
+            <td>{{t "table_view.static_bet_wins.field"}}</td>
           </tr>
         </when.field>
 
@@ -74,7 +74,7 @@
             <td>
               <CaseOf @kind={{target}} as |when|>
                 <when.nothing>
-                  7, 11
+                  {{t "table_view.static_bet_wins.pass"}}
                 </when.nothing>
                 <when.just as |target|>
                   {{target}}

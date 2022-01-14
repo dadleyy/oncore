@@ -23,6 +23,9 @@ login:
   login: "Log In"
 table_view:
   no_selection: "Select a player to view their bets"
+  static_bet_wins:
+    pass: "7 or 11"
+    field: "2, 3, 4, 9, 10, 11, or 12"
   players: "Players"
   failed_bet: "Failed Bet"
   roller: "Roller"

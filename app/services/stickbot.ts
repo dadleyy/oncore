@@ -37,7 +37,7 @@ export type BetSubmissionResult = Seidr.Result<StickbotError.default, BetSubmiss
 export function isMissing<T>(result: Seidr.Result<StickbotError.default, T>): boolean {
   return result.caseOf({
     Ok: always(false),
-    Err: error => {
+    Err: (error) => {
       return error.caseOf({
         MissingResource: always(true),
         _: always(false),
@@ -88,7 +88,7 @@ class Stickbot extends Service {
   public async fetch<T>(url: string): Promise<Seidr.Result<StickbotError.default, T>> {
     const result = await promises.awaitResult(fetchApi(`${config.apiURL}${url}`));
     const safe = result.mapErr(StickbotError.Unknown);
-    const parsed = await promises.asyncFlatMap(safe, (response) => normalizeResponse<T>(response))
+    const parsed = await promises.asyncFlatMap(safe, (response) => normalizeResponse<T>(response));
     const missing = isMissing(parsed);
 
     if (missing) {

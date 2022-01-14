@@ -65,7 +65,7 @@ export function parseBet(res: BetResponse): Seidr.Maybe<StickbotBet.PlacedBed> {
     const [kind, amount, target] = res.target;
     const normalized = dasherize(kind);
 
-    switch(normalized) {
+    switch (normalized) {
       case 'hardway':
         return Seidr.Just(StickbotBet.PlacedHardwayBet(amount, target));
       case 'place':

@@ -60,7 +60,7 @@ function mapSeat(input: Stickbot.Seat): Seat {
 
 function parse(table: Stickbot.TableDetails, session: CurrentSession): State {
   const mappedSeats = table.seats.map(mapSeat);
-  const player = mappedSeats.find(s => s.id === session.id);
+  const player = mappedSeats.find((s) => s.id === session.id);
   const playerPosition = Seidr.Maybe.fromNullable(player);
   const rollHistory = table.rolls.map(([left, right]) => ({
     left,
@@ -68,7 +68,8 @@ function parse(table: Stickbot.TableDetails, session: CurrentSession): State {
     total: left + right,
   }));
 
-  const selectedSeat = playerPosition.map((seat) => ({ ...seat, id: session.id }))
+  const selectedSeat = playerPosition
+    .map((seat) => ({ ...seat, id: session.id }))
     .orElse(() => Seidr.Maybe.fromNullable(mappedSeats[0]));
 
   return {

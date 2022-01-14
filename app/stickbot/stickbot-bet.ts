@@ -12,8 +12,7 @@ export type PlacedBetVariants = {
   Hardway: [number, number];
 };
 
-export class PlacedBed extends SumType<PlacedBetVariants> {
-}
+export class PlacedBed extends SumType<PlacedBetVariants> {}
 
 export function PlacedHardwayBet(amount: number, target: number): PlacedBed {
   return new PlacedBed('Hardway', amount, target);
@@ -50,7 +49,6 @@ export function getComeTarget(bet: PlacedBed): Seidr.Maybe<number> {
   });
 }
 
-
 export function isPass(bet: PlacedBed): boolean {
   return bet.caseOf({
     Pass: yes,
@@ -59,6 +57,6 @@ export function isPass(bet: PlacedBed): boolean {
 }
 
 export type BetResult = {
-  winnings: number,
+  winnings: number;
   bet: PlacedBed;
 };
