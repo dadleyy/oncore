@@ -101,7 +101,8 @@ function parse(table: Stickbot.TableDetails, session: CurrentSession): State {
   }));
 
   const seats = (Object.entries(table.seats || {}) || []).map(([id, seat]) => ({ ...parseSeat(seat), id }));
-  const selectedSeat = playerPosition.map((seat) => ({ ...seat, id: session.id }));
+  const selectedSeat = playerPosition.map((seat) => ({ ...seat, id: session.id })).orElse(() => Seidr.Just(seats[0]));
+
 
   return {
     table,
@@ -174,7 +175,7 @@ export async function hydrate(
 
   return start.map((next) => {
     const selectedSeat = state.selectedSeat
-      .flatMap(({ id }) => Seidr.Maybe.fromNullable(next.seats.find((s) => s.id === id)))
+      .flatMap(({ id }) => Seidr.Maybe.fromNullable(next.seats.find((s) => s.id === id) || next.seats[0]))
       .orElse(() => next.selectedSeat);
 
     return {

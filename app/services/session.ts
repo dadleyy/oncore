@@ -15,6 +15,7 @@ export type CurrentSession = {
 };
 
 class Session extends Service {
+  @tracked
   private _session: Seidr.Maybe<CurrentSession> = Seidr.Nothing();
 
   @tracked
@@ -30,11 +31,13 @@ class Session extends Service {
 
     if (!response || !response.status) {
       debug('[warning] fatal network fail on session fetch');
+      this._session = Seidr.Nothing();
       return Seidr.Nothing();
     }
 
     if (response.status !== 200) {
       this.balance = 0;
+      this._session = Seidr.Nothing();
       debug('no session found, received "%s"', response.status);
       return Seidr.Nothing();
     }

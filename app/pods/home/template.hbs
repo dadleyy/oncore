@@ -45,6 +45,7 @@
                         disabled={{not row.joined}}
                         type="button"
                         class="icon mr-3"
+                        title={{t "home.actions.leave_table"}}
                         {{on "click" (fn this.leaveTable row.table.id)}}>
                         <i class="fa fa-sign-out-alt" />
                       </button>
@@ -52,6 +53,7 @@
                         disabled={{row.joined}}
                         type="button"
                         class="icon"
+                        title={{t "home.actions.join_table"}}
                         {{on "click" (fn this.joinTable row.table.id)}}>
                         <i class="fa fa-sign-in-alt" />
                       </button>

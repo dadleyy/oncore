@@ -1,8 +1,12 @@
-import Service from '@ember/service';
+import Service, { inject as service } from '@ember/service';
+import Session from 'oncore/services/session';
+import RouterUtility from 'oncore/services/router-utility';
 import config from 'oncore/config/environment';
+import { next } from '@ember/runloop';
 import fetchApi from 'fetch';
 import * as Seidr from 'seidr';
 import * as promises from 'oncore/utility/promise-helpers';
+import { always } from 'oncore/utility/fp-helpers';
 import debugLogger from 'ember-debug-logger';
 import * as StickbotError from 'oncore/stickbot/stickbot-error';
 
@@ -29,6 +33,18 @@ export type Table = {
 };
 
 export type BetSubmissionResult = Seidr.Result<StickbotError.default, BetSubmission>;
+
+export function isMissing<T>(result: Seidr.Result<StickbotError.default, T>): boolean {
+  return result.caseOf({
+    Ok: always(false),
+    Err: error => {
+      return error.caseOf({
+        MissingResource: always(true),
+        _: always(false),
+      });
+    },
+  });
+}
 
 async function normalizeResponse<T>(response: Response): Promise<Seidr.Result<StickbotError.default, T>> {
   if (response.status === 404) {
@@ -63,14 +79,44 @@ async function post<T>(url: string, body: string): Promise<Seidr.Result<Stickbot
 }
 
 class Stickbot extends Service {
+  @service
+  public declare session: Session;
+
+  @service
+  public declare routerUtility: RouterUtility;
+
   public async fetch<T>(url: string): Promise<Seidr.Result<StickbotError.default, T>> {
     const result = await promises.awaitResult(fetchApi(`${config.apiURL}${url}`));
     const safe = result.mapErr(StickbotError.Unknown);
-    return await promises.asyncFlatMap(safe, (response) => normalizeResponse<T>(response));
+    const parsed = await promises.asyncFlatMap(safe, (response) => normalizeResponse<T>(response))
+    const missing = isMissing(parsed);
+
+    if (missing) {
+      const { session, routerUtility } = this;
+      debug('[warning] missing resource, eagerly moving to login page');
+      next(async () => {
+        await session.identify();
+        routerUtility.refresh();
+      });
+    }
+
+    return parsed as Seidr.Result<StickbotError.default, T>;
   }
 
   public async post<D, T>(url: string, data?: D): Promise<Seidr.Result<StickbotError.default, T>> {
-    return post(`${config.apiURL}${url}`, data ? JSON.stringify(data) : '');
+    const result = await post(`${config.apiURL}${url}`, data ? JSON.stringify(data) : '');
+    const missing = isMissing(result);
+
+    if (missing) {
+      const { session, routerUtility } = this;
+      debug('[warning] missing resource, eagerly moving to login page');
+      next(async () => {
+        await session.identify();
+        routerUtility.refresh();
+      });
+    }
+
+    return result as Seidr.Result<StickbotError.default, T>;
   }
 
   public async deleteAccount(): Promise<Seidr.Result<Error, boolean>> {
