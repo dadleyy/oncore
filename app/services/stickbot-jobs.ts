@@ -9,11 +9,16 @@ import debugLogger from 'ember-debug-logger';
 const debug = debugLogger('service:stickbot-jobs');
 
 export type JobOutputVariants = {
+  TableCreated: [string];
   BetFailure: [string];
   BetProcessed: [];
 };
 
 export class JobOutput extends SumType<JobOutputVariants> {}
+
+export function TableCreated(id: string): JobOutput {
+  return new JobOutput('TableCreated', id);
+}
 
 export function BetFailure(reason: string): JobOutput {
   return new JobOutput('BetFailure', reason);
@@ -29,12 +34,24 @@ export type JobStatus = {
   output?: JobOutput;
 };
 
+export function getCreatedTableId(job: JobStatus): Seidr.Maybe<string> {
+  const output = Seidr.Maybe.fromNullable(job.output);
+  return output.flatMap((out) => {
+    return out.caseOf({
+      BetFailure: () => Seidr.Nothing(),
+      BetProcessed: () => Seidr.Nothing(),
+      TableCreated: (id) => Seidr.Just(id),
+    });
+  });
+}
+
 export function getFailureTranslation(job: JobStatus): Seidr.Maybe<string> {
   const output = Seidr.Maybe.fromNullable(job.output);
   return output.flatMap((out) => {
     return out.caseOf({
       BetFailure: (reason) => Seidr.Just(`stickbot_errors.bet_failure.${reason}`),
       BetProcessed: () => Seidr.Nothing(),
+      TableCreated: () => Seidr.Nothing(),
     });
   });
 }
@@ -59,14 +76,19 @@ function parseResponse(res: JobResponse): JobStatus {
     };
   }
 
+  if (output['table_created']) {
+    return {
+      ...res,
+      output: TableCreated(output['table_created']),
+    };
+  }
+
   if (output['bet_failed']) {
     return {
       ...res,
       output: BetFailure(output['bet_failed']),
     };
   }
-
-  console.log({ output });
 
   return {
     ...res,

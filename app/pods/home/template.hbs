@@ -8,8 +8,13 @@
         <div class="mb-2 flex items-center">
           <p>{{t "home.all_tables"}}</p>
           <div class="ml-auto">
-            <button data-role="create-table" type="button" {{on "click" this.createTable}}>
-              {{t "home.create_table"}}
+            <button
+              data-role="create-table"
+              type="button"
+              disabled={{this.creating}}
+              {{on "click" this.createTable}}
+            >
+              {{if this.creating (t "home.creating_table") (t "home.create_table")}}
             </button>
           </div>
         </div>
@@ -18,7 +23,7 @@
             <tr>
               <th>{{t "home.columns.table_id"}}</th>
               <th>{{t "home.columns.population"}}</th>
-              <th>{{t "home.columns.actions"}}</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -32,13 +37,32 @@
                   {{else if (eq row.busy 'LEAVING')}}
                     <p>{{t "leaving_table"}}</p>
                   {{else}}
-                    {{#if row.joined}}
-                      <LinkTo @route="tables.single-table" @model={{row.table.id}}>{{t "home.actions.view_table"}}</LinkTo>
-                      <a href="#" {{on "click" (fn this.leaveTable row.table.id)}}>{{t "home.actions.leave_table"}}</a>
-                    {{else}}
-                      <a href="#" {{on "click" (fn this.joinTable row.table.id)}}>{{t "home.actions.join_table"}}</a>
-                    {{/if}}
+                    <div class="flex items-center justify-center">
+                      <LinkTo @route="tables.single-table" @model={{row.table.id}} class="mr-3 block">
+                        <i class="fa fa-eye" />
+                      </LinkTo>
+                      <button
+                        disabled={{not row.joined}}
+                        type="button"
+                        class="icon mr-3"
+                        {{on "click" (fn this.leaveTable row.table.id)}}>
+                        <i class="fa fa-sign-out-alt" />
+                      </button>
+                      <button
+                        disabled={{row.joined}}
+                        type="button"
+                        class="icon"
+                        {{on "click" (fn this.joinTable row.table.id)}}>
+                        <i class="fa fa-sign-in-alt" />
+                      </button>
+                    </div>
                   {{/if}}
+                </td>
+              </tr>
+            {{else}}
+              <tr data-role="empty-table">
+                <td colspan={{3}} class="text-center">
+                  {{t "home.no_tables"}}
                 </td>
               </tr>
             {{/each}}

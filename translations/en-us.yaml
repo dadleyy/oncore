@@ -7,7 +7,9 @@ application:
   header:
     home: "Home"
 home:
+  no_tables: "No Active Tables"
   create_table: "Create Table"
+  creating_table: "Creating Table..."
   all_tables: "All Tables"
   actions:
     view_table: "View"

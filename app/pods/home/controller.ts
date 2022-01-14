@@ -19,8 +19,8 @@ const debug = debugLogger('controller:home');
 
 type PendingJob = {
   id: string;
-  table: string;
-  kind: 'JOINING' | 'LEAVING';
+  table?: string;
+  kind: State.RowOperation;
 };
 
 class HomeController extends Controller {
@@ -49,6 +49,11 @@ class HomeController extends Controller {
 
   @service
   public routerUtility!: RouterUtils;
+
+  public get creating(): boolean {
+    const { jobs } = this;
+    return jobs.some((j) => j.kind === 'CREATING');
+  }
 
   public get displayedTableRows(): Array<State.Row> {
     const { model: result, jobs } = this;
@@ -92,6 +97,7 @@ class HomeController extends Controller {
       Ok: (jobId) => {
         debug('joining table - "%s" via job "%s"', tableId, jobId);
         const jobs = [{ id: jobId, table: tableId, kind: 'JOINING' as State.RowOperation }, ...this.jobs];
+
         if (this._poll) {
           cancel(this._poll.id);
         }
@@ -107,18 +113,19 @@ class HomeController extends Controller {
 
   @action
   public async createTable(): Promise<void> {
-    const { stickbotTables: stickbot, routerUtility: router } = this;
-    const tableId = (await stickbot.create()).getOrElse(undefined);
-
-    if (!tableId) {
-      debug('failed creating new table');
-      alert('Unable to create new table');
-      return;
-    }
-
-    debug('created new table "%j"', tableId);
-    router.transitionTo('tables.single-table', tableId);
-    return;
+    const { stickbotTables: stickbot, toasts } = this;
+    const jobResult = await stickbot.create();
+    jobResult.caseOf({
+      Ok: (jobId) => {
+        debug('table creation job "%s" queued, polling');
+        const jobs = [{ id: jobId, kind: 'CREATING' as State.RowOperation }, ...this.jobs];
+        this.startPoll(jobs);
+      },
+      Err: (error) => {
+        debug('unable to queue seating - %o', error);
+        toasts.add(StickbotFailure(error));
+      },
+    });
   }
 
   @action
@@ -129,6 +136,14 @@ class HomeController extends Controller {
       debug('ending job poll');
       cancel(cursor.id);
     }
+  }
+
+  private startPoll(jobs: Array<PendingJob>): void {
+    if (this._poll) {
+      cancel(this._poll.id);
+    }
+    this.jobs = jobs;
+    this.poll(this.jobs);
   }
 
   private async poll(jobs: Array<PendingJob>): Promise<void> {
@@ -157,6 +172,20 @@ class HomeController extends Controller {
             }
 
             switch (job.kind) {
+              case 'CREATING': {
+                const id = Seidr.Maybe.fromNullable(response)
+                  .flatMap(StickbotJobs.getCreatedTableId)
+                  .getOrElse(undefined);
+
+                if (!id) {
+                  debug('[warning] unable to locate created table id from job "%s"', job.id);
+                  return Seidr.Nothing();
+                }
+
+                debug('successfully created table "%s", routing', id);
+                routerUtility.transitionTo('tables.single-table', id).then(() => session.identify());
+                return Seidr.Nothing();
+              }
               case 'JOINING':
                 debug('join attempt "%s" complete', job.id);
                 routerUtility.transitionTo('tables.single-table', job.table).then(() => session.identify());

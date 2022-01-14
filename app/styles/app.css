@@ -175,37 +175,16 @@ button.warning:hover {
 }
 
 .tab {
-  @apply border-solid border px-3 py-2 inline-block;
-  @apply border-r-0;
   @apply relative;
-  border-color: rgba(0,0,0,0.90);
+  @apply ml-2 pt-1;
+}
+
+.tab[data-active] {
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .tab:first-child {
-  @apply rounded-bl;
-  @apply rounded-tl;
-}
-
-.tab:last-child {
-  @apply border-r;
-  @apply rounded-br;
-  @apply rounded-tr;
-}
-
-.active-tab {
-  overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.active-tab:after {
-  content: '';
-  width: 10px;
-  height: 10px;
-  position: absolute;
-  left: calc(50% - 5px);
-  top: -5px;
-  transform: rotate(45deg);
-  background-color: rgba(0,0,0,0.90);
+  @apply ml-0;
 }
 
 .toast-container {
@@ -236,4 +215,23 @@ button.warning:hover {
 .toast[data-treatment=warning] button:hover {
   @apply text-yellow-800;
   background-color: rgba(0,0,0,0.00);
+}
+
+.avatar {
+  @apply flex items-center text-center justify-center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.avatar img {
+  display: block;
+}
+
+.avatar[data-active] {
+  background-color: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.15);
 }

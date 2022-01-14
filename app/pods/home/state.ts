@@ -5,7 +5,7 @@ import debugLogger from 'ember-debug-logger';
 
 const debug = debugLogger('util:home.state');
 
-export type RowOperation = 'LEAVING' | 'JOINING';
+export type RowOperation = 'LEAVING' | 'JOINING' | 'CREATING';
 
 export type Row = {
   table: Table;

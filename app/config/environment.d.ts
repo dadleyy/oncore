@@ -4,6 +4,7 @@ declare const config: {
   environment: string;
   modulePrefix: string;
   apiURL: string;
+  avatarURL: string;
   externalRoutes: {
     auth: {
       start: string;

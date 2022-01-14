@@ -10,16 +10,14 @@
       <p class="mr-4 inline-block">{{t "table_view.players"}}</p>
       <ul data-role="seat-tabs" class="tab-container">
         {{#each this.visibleSeats key="id" as |seatView|}}
-        <li
-          class={{if (eq this.selectedSeatId seatView.id) "active-tab tab" "tab"}}
-          data-player-id={{seatView.id}}
-          {{on "click" (fn this.selectSeat seatView.id)}}
-          role="button"
-        >
-            {{seatView.nickname}}
-            {{#if (eq seatView.id this.state.session.id)}}
-              <i class="fa fa-star" />
-            {{/if}}
+          <li
+            class="tab"
+            role="button"
+            data-player-id={{seatView.id}}
+            data-active={{eq this.selectedSeatId seatView.id}}
+            {{on "click" (fn this.selectSeat seatView.id)}}
+          >
+            <UserAvatar @user={{hash nickname=seatView.nickname id=seatView.id}}/>
           </li>
         {{/each}}
       </ul>
