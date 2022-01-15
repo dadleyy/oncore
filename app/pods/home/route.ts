@@ -5,7 +5,7 @@ import type SessionService from 'oncore/services/session';
 import type TableIndex from 'oncore/services/stickbot-tables';
 import { inject as service } from '@ember/service';
 import * as State from 'oncore/pods/home/state';
-import * as Seidr from 'seidr';
+import Controller from 'oncore/pods/home/controller';
 import * as helpers from 'oncore/utility/maybe-helpers';
 
 const debug = debugLogger('route:home');
@@ -29,7 +29,11 @@ class HomeRoute extends Route {
     }
   }
 
-  public async model(): Promise<Seidr.Result<Error, State.Model>> {
+  public resetController(controller: Controller): void {
+    controller.set('jobs', []);
+  }
+
+  public async model(): Promise<State.ModelResult> {
     const { stickbotTables: tableIndex, session } = this;
     debug('loading tables');
 

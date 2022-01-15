@@ -9,11 +9,81 @@
 
   <tbody>
     {{#each this.projectedBets key="@index" as |projection|}}
-      <tr>
-        <td>{{projection.bet.kind}}</td>
-        <td>{{projection.bet.amount}}</td>
-        <td>{{projection.bet.target}}</td>
-      </tr>
+      <CaseOf @kind={{projection.bet}} as |when|>
+        <when.pass as |amount target|>
+          <tr>
+            <td>{{t "table_view.bets.pass"}}</td>
+            <td>{{amount}}</td>
+            <td>
+              <CaseOf @kind={{target}} as |when|>
+                <when.nothing>
+                  {{t "table_view.static_bet_wins.pass"}}
+                </when.nothing>
+                <when.just as |target|>
+                  {{target}}
+                </when.just>
+              </CaseOf>
+            </td>
+          </tr>
+        </when.pass>
+
+        <when.field as |amount|>
+          <tr>
+            <td>{{t "table_view.bets.field"}}</td>
+            <td>{{amount}}</td>
+            <td>{{t "table_view.static_bet_wins.field"}}</td>
+          </tr>
+        </when.field>
+
+        <when.hardway as |amount target|>
+          <tr>
+            <td>{{t "table_view.bets.hardway"}}</td>
+            <td>{{amount}}</td>
+            <td>{{target}}</td>
+          </tr>
+        </when.hardway>
+
+        <when.place as |amount target|>
+          <tr>
+            <td>{{t "table_view.bets.place"}}</td>
+            <td>{{amount}}</td>
+            <td>{{target}}</td>
+          </tr>
+        </when.place>
+
+        <when.comeOdds as |amount target|>
+          <tr>
+            <td>{{t "table_view.bets.come_odds"}}</td>
+            <td>{{amount}}</td>
+            <td>{{target}}</td>
+          </tr>
+        </when.comeOdds>
+
+        <when.passOdds as |amount target|>
+          <tr>
+            <td>{{t "table_view.bets.pass_odds"}}</td>
+            <td>{{amount}}</td>
+            <td>{{target}}</td>
+          </tr>
+        </when.passOdds>
+
+        <when.come as |amount target|>
+          <tr>
+            <td>{{t "table_view.bets.come"}}</td>
+            <td>{{amount}}</td>
+            <td>
+              <CaseOf @kind={{target}} as |when|>
+                <when.nothing>
+                  {{t "table_view.static_bet_wins.pass"}}
+                </when.nothing>
+                <when.just as |target|>
+                  {{target}}
+                </when.just>
+              </CaseOf>
+            </td>
+          </tr>
+        </when.come>
+      </CaseOf>
     {{/each}}
   </tbody>
 

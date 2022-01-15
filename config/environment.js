@@ -8,6 +8,7 @@ module.exports = function (environment) {
     rootURL: '/',
     locationType: 'auto',
     apiURL: '',
+    avatarURL: 'https://picsum.photos/200/300',
     externalRoutes: {
       auth: {
         start: 'http://0.0.0.0:8611/auth/start',

@@ -1,26 +1,27 @@
 <div id="modal-container"></div>
 
-<header class="flex z-10 py-3 px-1 border-b border-solid border-gray-300 items-center bg-gray-100">
+<header class="flex z-10 py-3 px-1 border-b border-solid items-center color-container-1 relative z-10">
+  <nav role="tabpanel">
+    <LinkTo @route="home">
+      <i class="fas fa-home" />
+      {{t "application.header.home"}}
+    </LinkTo>
+  </nav>
+
   <CaseOf @kind={{this.model}} as |when|>
     <when.just>
-      <nav role="tabpanel">
-        <LinkTo @route="home">
-          <i class="fas fa-home" />
-          {{t "application.header.home"}}
-        </LinkTo>
-      </nav>
-
       <aside role="menu" class="ml-auto">
         {{!-- UserMenu uses it's own service injection to be notified when the player's balance is updated --}}
         <Application::UserMenu />
       </aside>
     </when.just>
   </CaseOf>
+  <ToastHost />
 </header>
 
-<main class="w-full relative h-full z-10">
+<main class="w-full relative h-full z-9">
   <div class="w-full flex relative h-full">
-    <section class="pt-2 pl-2 pr-1 flex-1 bg-white">{{outlet}}</section>
+    <section class="pt-2 pl-2 pr-1 flex-1 color-container-1">{{outlet}}</section>
   </div>
 </main>
 <footer class="z-10"></footer>

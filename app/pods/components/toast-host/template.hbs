@@ -1,0 +1,20 @@
+<div class="toast-container">
+  {{#each this.items key="id" as |toast|}}
+    <div
+      class="toast"
+      data-treatment={{toast.treatment}}
+      data-role="toast"
+      {{did-insert this.scheduleRemoval toast.id}}
+    >
+      <div data-role="messaging"><p>{{t toast.translation}}</p></div>
+      <div data-role="dismissal" class="ml-auto">
+        <button
+          type="button"
+          class="icon"
+          {{on "click" (fn this.removeNow toast.id)}}>
+          <i class="fa fa-times" />
+        </button>
+      </div>
+    </div>
+  {{/each}}
+</div>

@@ -1,0 +1,16 @@
+<div
+  class="avatar"
+  data-role="avatar"
+  data-id={{@user.id}}
+  data-nickname={{@user.nickname}}
+  data-active={{this.isActive}}
+  title={{@user.nickname}}
+  {{did-insert this.loadAvatar}}
+  ...attributes
+  >
+  {{#if this.loadedImage}}
+    <img src={{this.loadedImage}} alt={{this.initial}} />
+  {{else}}
+    <p>{{this.initial}}</p>
+  {{/if}}
+</div>

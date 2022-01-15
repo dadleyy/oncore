@@ -1,23 +1,23 @@
 import Component from '@glimmer/component';
-import * as State from 'oncore/pods/components/table-view/state';
+import * as StickbotBets from 'oncore/stickbot/stickbot-bet';
 
 type Args = {
-  bets: Array<State.ParsedBet>;
+  bets: Array<StickbotBets.PlacedBed>;
   pendingBets: Array<string>;
 };
 
 type ProjectedBet = {
-  bet: State.ParsedBet;
+  bet: StickbotBets.PlacedBed;
 };
 
 class BetList extends Component<Args> {
   public get empty(): boolean {
-    const { pendingBets, bets } = this.args;
+    const { pendingBets = [], bets = [] } = this.args;
     return pendingBets.length === 0 && bets.length === 0;
   }
 
   public get projectedBets(): Array<ProjectedBet> {
-    const { bets } = this.args;
+    const { bets = [] } = this.args;
     return bets.map((bet) => ({ bet }));
   }
 }
