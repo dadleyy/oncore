@@ -12,6 +12,7 @@ export const JOB_CONSTANTS = {
   ROLL_PROCESED: 'roll_processed',
   TABLE_CREATED: 'table_created',
   BET_FAILED: 'bet_failed',
+  BET_STALE: 'bet_stale',
   BET_PROCESSED: 'bet_processed',
 };
 
@@ -101,7 +102,16 @@ function parseResponse(res: JobResponse): JobStatus {
     };
   }
 
+  if (typeof output === 'string' && output === JOB_CONSTANTS.BET_STALE) {
+    return {
+      ...res,
+      output: BetFailure(output),
+    };
+  }
+
   if (typeof output === 'string') {
+    debug('[warning] unrecognized string output - %s', output);
+
     return {
       ...res,
       output: undefined,
@@ -121,6 +131,8 @@ function parseResponse(res: JobResponse): JobStatus {
       output: BetFailure(output[JOB_CONSTANTS.BET_FAILED]),
     };
   }
+
+  debug('[warning] unknown output - %j', output);
 
   return {
     ...res,

@@ -41,6 +41,13 @@ class WagerInputModal extends Component {
   }
 
   @action
+  public send(): void {
+    const { modals, key, valid: wager } = this;
+    this.wager = undefined;
+    modals.close(key, Seidr.Just(wager));
+  }
+
+  @action
   public input(event: InputEvent): void {
     const target = event.target as HTMLInputElement;
     this.wager = target.value;

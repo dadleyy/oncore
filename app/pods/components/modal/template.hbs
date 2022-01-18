@@ -5,8 +5,17 @@
         {{yield (hash overlay=(component 'modal/yield' class="modal-overlay")) to="overlay"}}
 
         <div class="modal-positioner">
-          <div class="modal-content color-container-1" ...attributes>
-            {{yield data to="content"}}
+          <div class="modal-content color-container-1">
+            <div class="modal-host-content">
+              <div class="ml-auto">
+                <button type="button" class="icon" {{on "click" this.close}}>
+                  <i class="fa fa-times" />
+                </button>
+              </div>
+            </div>
+            <div clas="modal-consumer-content" ...attributes>
+              {{yield data to="content"}}
+            </div>
           </div>
         </div>
       </div>

@@ -171,7 +171,10 @@ class TableView extends Component<{ state: State.State }> {
         debug('[warn] bet submission totally failed %s', error);
         return current;
       },
-      Ok: (job) => State.addPendingBet(current, { id: job.job }),
+      Ok: (job) => {
+        debug('adding pending bet "%s"', job.job);
+        return State.addPendingBet(current, { id: job.job });
+      },
     });
 
     this.history = [State.makeBusy(next, false), ...this.history];

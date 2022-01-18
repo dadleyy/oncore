@@ -4,7 +4,7 @@
   <:content as |config|>
     <label>
       <input
-        type="text"
+        type="number"
         class="w-80"
         placeholder={{t "wager_input_placeholder" kind=(t (concat "table_view.bets." (underscore config.kind)))}}
         value={{this.wager}}
@@ -14,5 +14,9 @@
         {{on-key "_all" this.submit}}
       />
     </label>
+
+    <button type="button" data-role="submit" {{on "click" this.send}}>
+      <i class="fa fa-send" />
+    </button>
   </:content>
 </Modal>

@@ -97,13 +97,18 @@ export function parseBet(res: BetResponse): Seidr.Maybe<StickbotBet.PlacedBed> {
   return Seidr.Nothing();
 }
 
+function parseResult([betData, winner, winnings]: BetResultResponse): Seidr.Maybe<StickbotBet.BetResult> {
+  const maybeBet = parseBet(betData);
+  return maybeBet.map((bet) => ({ bet, winnings: winner ? winnings : 0 }));
+}
+
 function parseTableDetailResponse(res: TableDetailsResponse): TableDetails {
   const seats = Object.entries(res.seats).map(([id, data]) => {
     return {
       ...data,
       id,
       bets: maybeHelpers.flatten(data.bets.map(parseBet)),
-      history: [],
+      history: maybeHelpers.flatten(data.history.map(parseResult)).reverse(),
     };
   });
 

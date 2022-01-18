@@ -85,6 +85,12 @@
         </when.come>
       </CaseOf>
     {{/each}}
+
+    {{#each @pendingBets key="id" as |pending|}}
+      <tr data-role="pending-bet" data-job-id={{pending.id}}>
+        <td colspan={{3}}>{{t "table_view.pending"}}</td>
+      </tr>
+    {{/each}}
   </tbody>
 
   {{#if this.empty}}
@@ -94,12 +100,4 @@
       </tr>
     </tbody>
   {{/if}}
-
-  <tbody>
-    {{#each @pendingBets key="id" as |pending|}}
-      <tr data-role="pending-bet" data-job-id={{pending.id}}>
-        <td colspan={{3}}>{{t "table_view.pending"}}</td>
-      </tr>
-    {{/each}}
-  </tbody>
 </table>

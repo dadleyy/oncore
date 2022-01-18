@@ -22,6 +22,12 @@ class Modal<P, R> extends Component<Args<P, R>> {
   }
 
   @action
+  public close(): void {
+    debug('closing modal "%s"', this.args.key);
+    this.modals.close(this.args.key, Seidr.Nothing());
+  }
+
+  @action
   public input(event: KeyboardEvent): void {
     const { keyCode } = event;
 

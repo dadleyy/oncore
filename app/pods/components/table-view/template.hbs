@@ -25,42 +25,94 @@
 
     <CaseOf @kind={{this.state.selectedSeat}} as |when|>
       <when.just as |seat|>
-        <table class="table-fixed mt-4">
-          <tbody>
-            <tr>
-              <td class="table-head">{{t "table_view.balance"}}</td>
-              <td class="table-head">{{seat.balance}}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <BetList
-          @bets={{seat.bets}}
-          @pendingBets={{or seat.pendingBets (array)}}
-          class="ml-0 w-full mt-4"
-        />
-
-        {{#if (eq seat.id this.state.session.id)}}
-          <div data-role="controls-and-actions" class="flex items-center mt-5">
-            <div class="flex-1 mr-10">
-              <button
-                disabled={{or this.state.busy (is-just this.state.pendingRoll) (not this.isRoller)}}
-                {{on "click" this.roll}}
-                type="button"
-              >
-                {{if (is-just this.state.pendingRoll) (t "rolling") (t "roll")}}
-              </button>
-            </div>
-
-            <BetControls
-              @button={{this.state.table.button}}
-              @busy={{or (is-just this.state.pendingRoll) this.state.busy}}
+        <div class="flex items-start">
+          <div class="flex-5 pr-2" data-role="action-info">
+            <BetList
               @bets={{seat.bets}}
-              @attempt={{this.bet}}
-              class="flex items-center flex-wrap gap-x-4 flex-8 gap-y-4"
+              @pendingBets={{or seat.pendingBets (array)}}
+              class="ml-0 w-full mt-4"
             />
+
+            {{#if (eq seat.id this.state.session.id)}}
+              <div data-role="controls-and-actions" class="flex items-center mt-5">
+                <div class="w-3/12 mr-10 h-full relative">
+                  <button
+                    disabled={{or this.state.busy (is-just this.state.pendingRoll) (not this.isRoller)}}
+                    class="w-full h-full relative block"
+                    {{on "click" this.roll}}
+                    type="button"
+                  >
+                    {{if (is-just this.state.pendingRoll) (t "rolling") (t "roll")}}
+                  </button>
+                </div>
+
+                <BetControls
+                  @button={{this.state.table.button}}
+                  @busy={{or (is-just this.state.pendingRoll) this.state.busy}}
+                  @bets={{seat.bets}}
+                  @attempt={{this.bet}}
+                  class="flex items-center flex-wrap gap-x-4 flex-8 gap-y-4"
+                />
+              </div>
+            {{/if}}
           </div>
-        {{/if}}
+
+          <div class="flex-3" data-role="monies-info">
+            <table class="table-fixed mt-4 w-full">
+              <tbody>
+                <tr>
+                  <td class="table-head">{{t "table_view.balance"}}</td>
+                  <td class="table-head">{{seat.balance}}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {{#if seat.history.length}}
+              <table class="table-fixed w-full mt-4">
+                <thead>
+                  <tr>
+                    <th>{{t "table_view.bet_kind"}}</th>
+                    <th>{{t "table_view.winnings"}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each (take 5 seat.history) as |pastBet|}}
+                    <tr>
+                      <td>
+                        <CaseOf @kind={{pastBet.bet}} as |when|>
+                          <when.pass>
+                            <p>{{t "table_view.bets.pass"}}</p>
+                          </when.pass>
+                          <when.passOdds>
+                            <p>{{t "table_view.bets.pass_odds"}}</p>
+                          </when.passOdds>
+                          <when.come>
+                            <p>{{t "table_view.bets.come"}}</p>
+                          </when.come>
+                          <when.comeOdds>
+                            <p>{{t "table_view.bets.come_odds"}}</p>
+                          </when.comeOdds>
+                          <when.field>
+                            <p>{{t "table_view.bets.field"}}</p>
+                          </when.field>
+                          <when.hardway>
+                            <p>{{t "table_view.bets.hardway"}}</p>
+                          </when.hardway>
+                          <when.place>
+                            <p>{{t "table_view.bets.place"}}</p>
+                          </when.place>
+                        </CaseOf>
+                      </td>
+                      <td>
+                        {{pastBet.winnings}}
+                      </td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            {{/if}}
+          </div>
+        </div>
       </when.just>
       <when.nothing>
         <div data-role="no-selection">{{t "table_view.no_selection"}}</div>

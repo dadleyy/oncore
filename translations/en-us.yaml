@@ -39,6 +39,7 @@ table_view:
   bet_kind: "Kind"
   no_bets: "No Bets"
   pending: "Pending"
+  winnings: "Winnings"
   roll: "Roll"
   rolling: "Rolling..."
   bets:
@@ -77,6 +78,7 @@ stickbot_errors:
   insufficient_funds: "Insufficient Funds"
   unknown_error: "Server request failed"
   bet_failure:
+    bet_stale: "Bet placed after allowed cutoff"
     invalid_come_bet: "Come bets cannot be made without a button established"
     other: "Invalid Bet"
 joining_table: "Joining..."

@@ -17,6 +17,8 @@ export type Seat = {
   balance: number;
   hasPass: boolean;
   bets: Array<StickbotBets.PlacedBed>;
+  history: Array<StickbotBets.BetResult>;
+  pendingBets?: Array<PendingJob>;
   comeOddsOptions: Array<number>;
 };
 
@@ -96,8 +98,12 @@ export function setPendingRoll(state: State, job: PendingJob): State {
 }
 
 export function addPendingBet(state: State, job: PendingJob): State {
+  const selectedSeat = state.selectedSeat.map((seat) =>
+    seat.id === state.session.id ? { ...seat, pendingBets: [job, ...(seat.pendingBets || [])] } : seat
+  );
   return {
     ...state,
+    selectedSeat,
     pendingBets: [job, ...state.pendingBets],
     nonce: uuid.generate(),
   };
@@ -144,7 +150,8 @@ export async function hydrate(
   return start.map((next) => {
     const selectedSeat = state.selectedSeat
       .flatMap(({ id }) => Seidr.Maybe.fromNullable(next.seats.find((s) => s.id === id) || next.seats[0]))
-      .orElse(() => next.selectedSeat);
+      .orElse(() => next.selectedSeat)
+      .map((seat) => (seat.id === state.session.id ? { ...seat, pendingBets } : seat));
 
     return {
       ...next,
