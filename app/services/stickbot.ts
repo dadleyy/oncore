@@ -120,7 +120,7 @@ class Stickbot extends Service {
   }
 
   public async deleteAccount(): Promise<Seidr.Result<Error, boolean>> {
-    const attempt = fetchApi('/delete-account', { method: HTTP_POST });
+    const attempt = fetchApi(`${config.apiURL}/delete-account`, { method: HTTP_POST });
     const result = await promises.awaitResult(attempt);
     return result.map(() => true);
   }
