@@ -11,7 +11,7 @@ class ApplicationRoute extends Route {
   @service
   public session!: Session;
 
-  public async model(): Promise<{ version: string, session: Seidr.Maybe<CurrentSession> }> {
+  public async model(): Promise<{ version: string; session: Seidr.Maybe<CurrentSession> }> {
     debug('application route loading');
     const identity = await this.session.identify();
     debug('loaded identity payload "%j"', identity);

@@ -2,7 +2,7 @@ export default config;
 
 declare const config: {
   environment: string;
-  version: string,
+  version: string;
   modulePrefix: string;
   apiURL: string;
   avatarURL: string;
