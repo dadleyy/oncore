@@ -8,7 +8,7 @@
     </LinkTo>
   </nav>
 
-  <CaseOf @kind={{this.model}} as |when|>
+  <CaseOf @kind={{this.model.session}} as |when|>
     <when.just>
       <aside role="menu" class="ml-auto">
         {{!-- UserMenu uses it's own service injection to be notified when the player's balance is updated --}}
@@ -18,10 +18,11 @@
   </CaseOf>
   <ToastHost />
 </header>
-
 <main class="w-full relative h-full z-9">
   <div class="w-full flex relative h-full">
     <section class="pt-2 pl-2 pr-1 flex-1 color-container-1">{{outlet}}</section>
   </div>
 </main>
-<footer class="z-10"></footer>
+<footer class="z-10 flex items-center">
+  <aside class="block ml-auto">{{this.model.version}}</aside>
+</footer>

@@ -9,6 +9,7 @@ module.exports = function (environment) {
     locationType: 'auto',
     apiURL: '',
     avatarURL: 'https://picsum.photos/200/300',
+    version: process.env['ONCORE_VERSION'] || 'dev',
     externalRoutes: {
       auth: {
         start: 'http://0.0.0.0:8611/auth/start',
