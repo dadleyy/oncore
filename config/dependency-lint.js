@@ -1,4 +1,3 @@
 module.exports = {
-  allowedVersions: {
-  },
+  allowedVersions: {},
 };
