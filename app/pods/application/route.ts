@@ -15,7 +15,7 @@ class ApplicationRoute extends Route {
     debug('application route loading');
     const identity = await this.session.identify();
     debug('loaded identity payload "%j"', identity);
-    return { version: config.version, session: identity };
+    return { version: config.version.slice(0, 7), session: identity };
   }
 }
 
